@@ -23,28 +23,36 @@ Regardless of whether a jigsaw puzzle can be solved, we can estimate how many di
 | q  | p     |
 |----|-------|
 | 1  | 1     |
-| 2  | 9     |
-| 3  | 36    |
-| 4  | 100   |
-| 5  | 225   |
-| 6  | 441   |
-| 7  | 784   |
-| 8  | 1296  |
-| 9  | 2025  |
-| 10 | 3025  |
-| 11 | 4356  |
-| 12 | 6084  |
-| 13 | 8281  |
-| 14 | 11025 |
-| 15 | 14400 |
-| 16 | 18496 |
-| 17 | 23409 |
-| 18 | 29241 |
-| 19 | 36100 |
-| 20 | 44100 |
+| 2  | 6     |
+| 3  | 24    |
+| 4  | 70    |
+| 5  | 165   |
+| 6  | 336   |
+| 7  | 616   |
+| 8  | 1044  |
+| 9  | 1665  |
+| 10 | 2530  |
+| 11 | 3696  |
+| 12 | 5226  |
+| 13 | 7189  |
+| 14 | 9660  |
+| 15 | 12720 |
+| 16 | 16456 |
+| 17 | 20961 |
+| 18 | 26334 |
+| 19 | 32680 |
+| 20 | 40110 |
 
 
 ## References
+
+No easy puzzles: Hardness results for jigsaw puzzles
+https://www.sciencedirect.com/science/article/pii/S0304397515001607
+
+Solving Small-piece Jigsaw Puzzles by Growing Consensus
+https://openaccess.thecvf.com/content_cvpr_2016/papers/Son_Solving_Small-Piece_Jigsaw_CVPR_2016_paper.pdf
+
+
 
 Shotgun Assembly of Labeled Graphs
 https://ieeexplore.ieee.org/abstract/document/8119552
