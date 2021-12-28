@@ -17,7 +17,7 @@ void search(bool has[], Callback & callback) {
 
     // Recurse, using stack for efficiency
     uint64_t total = 0;
-    uint8_t stack[16];
+    uint8_t stack[WIDTH * HEIGHT];
     unsigned index = 0;
     stack[0] = 0;
 
@@ -156,7 +156,6 @@ int main(int argc, char* argv[]) {
     }
 */
 
-
     /*
     unsigned count = 0;
     for (unsigned p = 0; p < 256; ++p)
@@ -165,34 +164,6 @@ int main(int argc, char* argv[]) {
             printf("%02u) %u, %u, %u, %u -> %u\n", count, p & 0b11, p >> 2 & 0b11, p >> 4 & 0b11, p >> 6 & 0b11, p);
         }
     return 0;
-    */
-
-    /*
-    uint64_t considered = 0;
-    uint64_t best_count = 99999999999999;
-    auto validate = [&considered, &best_count](uint8_t stack[]) -> bool {
-        ++considered;
-        if (considered % 100 == 0)
-            putchar('.');
-        
-        bool has[256] = {};
-        for (unsigned i = 0; i < 16; ++i)
-            has[canonical[stack[i]]] = true;
-        bool valid = true;
-        unsigned count = 0;
-        auto callback = [&](uint8_t stack[]) -> bool {
-            ++count;
-            return count < best_count;
-        };
-        search(has, callback);
-        if (count < best_count) {
-            printf("%u ", count);
-            print(stack);
-            //return false;
-            best_count = count;
-        }
-        return true;
-    };
     */
 
     search(has, print);
