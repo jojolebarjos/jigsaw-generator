@@ -133,6 +133,8 @@ A "simple" 5x5, with only one solution:
  [[3, 2, 0, 0], [3, 2, 4, 0], [2, 4, 4, 0], [3, 3, 1, 0], [0, 4, 4, 0]]]
 ```
 
+![5x5](img/5x5.svg)
+
 "Carefully chosen" inner border (the one at the top of the page), which has a unique solution, even when flipping pieces.
 This is a perfect fit for single color pieces (e.g. transparent plastic).
 
