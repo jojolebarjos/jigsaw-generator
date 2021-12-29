@@ -3,4 +3,5 @@
 *.o
 *.png
 *.pyc
+*.svg
 *.txt

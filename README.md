@@ -1,3 +1,4 @@
+
 # Jigsaw generator
 
 This is a small experiment where jigsaw puzzles are generated.
@@ -18,6 +19,8 @@ Let us distinguish between two families of edge types:
 
 
 ## Getting started
+
+_Note: it is very likely that you will need to tweak `generate.cpp` to your need_
 
 ...
 
@@ -83,13 +86,17 @@ Using the provided code, we focus on jigsaw puzzles that have a single solution 
 
 ### 3x3
 
+A simple one, with exactly one solution:
+
 ```json
 [[[1, 0, 0, 0], [1, 0, 2, 2], [0, 0, 2, 1]],
  [[1, 0, 0, 1], [1, 1, 2, 2], [0, 2, 2, 2]],
  [[2, 2, 0, 0], [1, 1, 1, 0], [0, 1, 2, 0]]]
 ```
 
-With disambiguation nudge at the bottom:
+![3x3](img/3x3.svg)
+
+With disambiguation pin at the bottom:
 
 ```json
 [[[1, 0, 0, 1], [1, 0, 2, 1], [0, 0, 2, 1]],
@@ -97,18 +104,26 @@ With disambiguation nudge at the bottom:
  [[2, 2, 0, 0], [1, 1, 1, 2], [0, 1, 2, 0]]]
 ```
 
+![3x3](img/3x3_pin.svg)
+
 
 ### 4x4
 
+A simple one, with exactly one solution:
+
 ```json
-[[[1, 0, 0, 1], [4, 0, 2, 4], [4, 0, 3, 4], [0, 0, 3, 2]],
- [[2, 2, 0, 1], [4, 3, 1, 2], [1, 3, 3, 3], [0, 1, 2, 0]],
- [[3, 2, 0, 4], [4, 1, 4, 3], [0, 4, 3, 3], [0, 0, 0, 1]],
- [[3, 3, 0, 0], [4, 4, 4, 0], [1, 4, 3, 0], [0, 2, 2, 0]]]
+[[[1, 0, 0, 1], [2, 0, 2, 1], [4, 0, 1, 1], [0, 0, 3, 3]],
+ [[3, 2, 0, 1], [2, 2, 4, 3], [3, 2, 1, 4], [0, 4, 4, 3]],
+ [[4, 2, 0, 3], [4, 4, 3, 1], [2, 3, 3, 1], [0, 4, 1, 2]],
+ [[2, 4, 0, 0], [1, 2, 1, 0], [1, 2, 2, 0], [0, 1, 2, 0]]]
 ```
+
+![4x4](img/4x4.svg)
 
 
 ### 5x5
+
+A "simple" 5x5, with only one solution:
 
 ```json
 [[[3, 0, 0, 1], [1, 0, 4, 3], [2, 0, 2, 3], [1, 0, 1, 2], [0, 0, 2, 2]],
@@ -118,15 +133,18 @@ With disambiguation nudge at the bottom:
  [[3, 2, 0, 0], [3, 2, 4, 0], [2, 4, 4, 0], [3, 3, 1, 0], [0, 4, 4, 0]]]
 ```
 
-Some inner borders allowed:
+"Carefully chosen" inner border (the one at the top of the page), which has a unique solution, even when flipping pieces.
+This is a perfect fit for single color pieces (e.g. transparent plastic).
 
 ```json
-[[[2, 0, 0, 1], [3, 0, 1, 3], [1, 0, 4, 3], [4, 0, 2, 3], [0, 0, 3, 2]],
- [[0, 2, 0, 0], [2, 4, 0, 2], [2, 4, 1, 2], [4, 4, 1, 4], [0, 1, 3, 1]],
- [[3, 0, 0, 4], [2, 1, 4, 4], [2, 1, 1, 4], [4, 3, 1, 1], [0, 2, 3, 3]],
- [[0, 3, 0, 4], [2, 3, 0, 2], [1, 3, 1, 2], [4, 2, 2, 2], [0, 4, 3, 3]],
- [[3, 3, 0, 0], [2, 1, 4, 0], [2, 1, 1, 0], [3, 1, 1, 0], [0, 4, 4, 0]]]
+[[[3, 0, 0, 4], [3, 0, 4, 2], [4, 0, 4, 4], [4, 0, 3, 1], [0, 0, 3, 1]],
+ [[3, 3, 0, 4], [0, 1, 4, 3], [3, 3, 0, 0], [2, 2, 4, 2], [0, 2, 1, 1]],
+ [[3, 3, 0, 2], [4, 4, 4, 3], [3, 0, 3, 1], [2, 1, 4, 4], [0, 2, 1, 4]],
+ [[1, 1, 0, 1], [2, 4, 2, 3], [4, 2, 1, 1], [1, 3, 3, 4], [0, 3, 2, 2]],
+ [[2, 2, 0, 0], [1, 4, 1, 0], [1, 2, 2, 0], [2, 3, 2, 0], [0, 1, 1, 0]]]
 ```
+
+![5x5](img/5x5_careful.svg)
 
 
 ## References

@@ -82,6 +82,18 @@ check:
         ))
             fit = false;
 
+        /*
+        // An edge is flat if and only if it is a border (or if it the 5th "corner" piece we want inside the board)
+        // Note: this is just an example of how to tweak the above formula
+        if (!(
+            (x == WIDTH  - 1 || (x == 1 && y == 1)) == ((piece >> (0 * BITS) & MASK) == 0) &&
+            (y ==          0 || (x == 2 && y == 2)) == ((piece >> (1 * BITS) & MASK) == 0) &&
+            (x ==          0 || (x == 2 && y == 1)) == ((piece >> (2 * BITS) & MASK) == 0) &&
+            (y == HEIGHT - 1 || (x == 2 && y == 1)) == ((piece >> (3 * BITS) & MASK) == 0)
+        ))
+            fit = false;
+        */
+
         // Edge must match piece on the left side
         if (x > 0 && !right[stack[index - 1]][piece])
             fit = false;
@@ -181,6 +193,20 @@ int main(int argc, char* argv[]) {
         }
         canonical[p] = canonical[q];
     }
+
+    /*
+    // Merge with their flipped variant
+    // Note: comment-out that if you don't plan to accept both faces of your pieces!
+    for (unsigned p = 0; p < NUM; ++p) {
+        unsigned f = ((p >> (0 * BITS)) & MASK) << (3 * BITS)
+                   | ((p >> (1 * BITS)) & MASK) << (2 * BITS)
+                   | ((p >> (2 * BITS)) & MASK) << (1 * BITS)
+                   | ((p >> (3 * BITS)) & MASK) << (0 * BITS);
+        f = canonical[f];
+        if (f < canonical[p])
+            canonical[p] = f;
+    }
+    */
 
     // Whether two pieces can be together
     for (unsigned a = 0; a < NUM; ++a)
