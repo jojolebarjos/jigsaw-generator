@@ -3,7 +3,8 @@ import numpy as np
 
 
 class Buffer:
-    def __init__(self):
+    def __init__(self, offset=0.2):
+        self.offset = offset
         self.data = []
         self.height = -1
         self.width = -1
@@ -23,13 +24,14 @@ class Buffer:
         # Choose scale
         index = (type - 1) // 2
         unit = [0.35, 0.25][index]
+        offset = -self.offset * unit
 
         # Control points
         k = np.sqrt(2)
-        a = origin + forward * (0.5 - 0.4 * unit)
-        b = origin + forward * (0.5 - 0.4 / k * unit) + right * (0.6 * unit - 0.4 / k * unit)
-        c = origin + forward * (0.5 + 0.4 / k * unit) + right * (0.6 * unit - 0.4 / k * unit)
-        d = origin + forward * (0.5 + 0.4 * unit)
+        a = origin + forward * (0.5 - 0.4 * unit) + right * offset
+        b = origin + forward * (0.5 - 0.4 / k * unit) + right * (0.6 * unit - 0.4 / k * unit + offset)
+        c = origin + forward * (0.5 + 0.4 / k * unit) + right * (0.6 * unit - 0.4 / k * unit + offset)
+        d = origin + forward * (0.5 + 0.4 * unit) + right * offset
         e = origin + forward
 
         # Radii
@@ -44,12 +46,26 @@ class Buffer:
         else:
             sweep = 1
 
+        # Slope to hook
+        if offset == 0:
+            self.data.append("L {} {}".format(*a))
+        else:
+            q1 = origin + forward * (0.5 - 0.4 * unit) / 2
+            q2 = q1 + right * offset
+            self.data.append("C {} {}, {} {}, {} {}".format(*q1, *q2, *a))
+
         # Draw hook
-        self.data.append("L {} {}".format(*a))
         self.data.append("A {} {} 0 0 {} {} {}".format(r1, r1, sweep, *b))
         self.data.append("A {} {} 0 1 {} {} {}".format(r2, r2, 1 - sweep, *c))
         self.data.append("A {} {} 0 0 {} {} {}".format(r1, r1, sweep, *d))
-        self.data.append("L {} {}".format(*e))
+
+        # Slope back to corner
+        if offset == 0:
+            self.data.append("L {} {}".format(*e))
+        else:
+            q1 = origin + forward * (1.5 + 0.4 * unit) / 2
+            q2 = q1 + right * offset
+            self.data.append("C {} {}, {} {}, {} {}".format(*q2, *q1, *e))
 
     def trace(self, types, origin, forward, right):
         # Note: type belongs to the piece on the right!
