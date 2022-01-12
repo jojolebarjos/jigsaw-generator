@@ -149,13 +149,28 @@ This is a perfect fit for single color pieces (e.g. transparent plastic).
 ![5x5](img/5x5_careful.svg)
 
 
-## References
+## Side note about laser cutting
 
- * No easy puzzles: Hardness results for jigsaw puzzles ([link](https://www.sciencedirect.com/science/article/pii/S0304397515001607))
- * Solving Small-piece Jigsaw Puzzles by Growing Consensus ([link](https://openaccess.thecvf.com/content_cvpr_2016/papers/Son_Solving_Small-Piece_Jigsaw_CVPR_2016_paper.pdf))
- * Shotgun Assembly of Labeled Graphs ([link](https://ieeexplore.ieee.org/abstract/document/8119552))
- * Solving jigsaw puzzles by computer ([link](https://link.springer.com/article/10.1007%252FBF02186360))
- * Automatic Reassembly of Three-Dimensional Jigsaw Puzzles ([link](https://www.worldscientific.com/doi/abs/10.1142/S0219467816500091))
- * Automatic Solution of Jigsaw Puzzles ([link](https://link.springer.com/article/10.1007/s10851-013-0454-3))
- * Multiphase Numerical Modeling of Dendritic Solidification for Jigsaw Puzzle Generation ([link](https://n-e-r-v-o-u-s.com/works/puzzles/jigsaw-paper.pdf))
- * Jigsaw puzzle images for steganography ([link](https://www.spiedigitallibrary.org/journals/Optical-Engineering/volume-48/issue-7/077006/Jigsaw-puzzle-images-for-steganography/10.1117/1.3159872.short?SSO=1))
+[PMMA](https://en.wikipedia.org/wiki/Poly(methyl_methacrylate)) (a.k.a. acrylic glass or plexiglass) is a good choice for laser cutter.
+It seems that extruded (PMMA XT) sheets are of lesser quality when it comes to cutting, and stay transparent (which is an issue when engraving the surface is desired).
+Therefore, casted acrylic (PMMA GS) is likely to be better.
+
+Relevant links:
+
+ * https://en.wikipedia.org/wiki/Cast_acrylic
+ * https://edutechwiki.unige.ch/fr/Mat%C3%A9riaux_pour_la_d%C3%A9coupe_et_la_gravure_laser
+ * https://www.youtube.com/watch?v=hiJft-LUAXI&ab_channel=TAPPlastics
+ * https://www.amazon.de/-/en/Acrylic-methyl-methacrylate-Transparent-Crystal/dp/B08T9YVLZ2
+ * https://www.youtube.com/watch?v=wtr2SWOBzf4&ab_channel=TrotecLaserUSA
+
+
+## Scholar references
+
+Even though these were not used in the final code, this may be of interest:
+
+ * _No easy puzzles: Hardness results for jigsaw puzzles_, Brand, 2015 ([link](https://www.sciencedirect.com/science/article/pii/S0304397515001607))
+ * _Solving Small-piece Jigsaw Puzzles by Growing Consensus_, Son et al., 2016 ([pdf](https://openaccess.thecvf.com/content_cvpr_2016/papers/Son_Solving_Small-Piece_Jigsaw_CVPR_2016_paper.pdf))
+ * _Shotgun Assembly of Labeled Graphs_, Mossel and Ross, 2017 ([link](https://ieeexplore.ieee.org/abstract/document/8119552))
+ * _Solving jigsaw puzzles by computer_, Wolfson et al., 1988 ([link](https://link.springer.com/article/10.1007%252FBF02186360))
+ * _Automatic Reassembly of Three-Dimensional Jigsaw Puzzles_, Grim et al., 2016 ([link](https://www.worldscientific.com/doi/abs/10.1142/S0219467816500091))
+ * _Automatic Solution of Jigsaw Puzzles_, Hoff and Olver, 2014 ([link](https://link.springer.com/article/10.1007/s10851-013-0454-3))
