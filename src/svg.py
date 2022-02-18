@@ -67,11 +67,17 @@ class Buffer:
             q2 = q1 + right * offset
             self.data.append("C {} {}, {} {}, {} {}".format(*q2, *q1, *e))
 
-    def trace(self, types, origin, forward, right):
+    def trace(self, types, origin, forward, right, margin):
         # Note: type belongs to the piece on the right!
-        self.data.append("M {} {}".format(*origin))
+        if margin > 0:
+            self.data.append("M {} {}".format(*(origin - forward * margin)))
+            self.data.append("L {} {}".format(*origin))
+        else:
+            self.data.append("M {} {}".format(*origin))
         for i, t in enumerate(types):
             self.segment(t, origin + i * forward, forward, right)
+        if margin > 0:
+            self.data.append("L {} {}".format(*(origin + forward * (len(types) + margin))))
 
     def mirror_types(self, types):
         result = []
@@ -84,7 +90,7 @@ class Buffer:
             result.append(t)
         return result
 
-    def jigsaw(self, matrix):
+    def jigsaw(self, matrix, margin=0.0):
         ex = np.array([1.0, 0.0])
         ey = np.array([0.0, 1.0])
         height, width, _ = matrix.shape
@@ -93,13 +99,13 @@ class Buffer:
 
         # Draw horizontal lines
         for y in range(height):
-            self.trace(matrix[y, :, 1], (0, y), ex, ey)
-        self.trace(self.mirror_types(matrix[-1, :, 3]), (0, height), ex, ey)
+            self.trace(matrix[y, :, 1], (0, y), ex, ey, margin)
+        self.trace(self.mirror_types(matrix[-1, :, 3]), (0, height), ex, ey, margin)
 
         # Draw vertical lines
         for x in range(width):
-            self.trace(matrix[:, x, 2], (x, 0), ey, ex)
-        self.trace(self.mirror_types(matrix[:, -1, 0]), (width, 0), ey, ex)
+            self.trace(matrix[:, x, 2], (x, 0), ey, ex, margin)
+        self.trace(self.mirror_types(matrix[:, -1, 0]), (width, 0), ey, ex, margin)
 
     def save(self, file):
         data = " ".join(self.data)

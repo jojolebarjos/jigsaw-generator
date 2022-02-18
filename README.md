@@ -120,6 +120,15 @@ A simple one, with exactly one solution:
 
 ![4x4](img/4x4.svg)
 
+And another one:
+
+```json
+[[[1, 0, 0, 1], [1, 0, 2, 1], [1, 0, 2, 4], [0, 0, 2, 4]],
+ [[2, 2, 0, 2], [1, 2, 1, 4], [3, 3, 2, 2], [0, 3, 4, 3]],
+ [[4, 1, 0, 4], [3, 3, 3, 1], [2, 1, 4, 2], [0, 4, 1, 3]],
+ [[3, 3, 0, 0], [4, 2, 4, 0], [3, 1, 3, 0], [0, 4, 4, 0]]]
+```
+
 
 ### 5x5
 
@@ -168,6 +177,8 @@ Relevant links:
 
 Even though these were not used in the final code, this may be of interest:
 
+ * _Unique reconstruction threshold for random jigsaw puzzles_, Nenadov et al., 2016 ([link](https://arxiv.org/abs/1605.03043))
+ * _Even 1 × n Edge-Matching and Jigsaw Puzzles are Really Hard_, Bosboom et al., 2016 ([link](https://arxiv.org/abs/1701.00146))
  * _No easy puzzles: Hardness results for jigsaw puzzles_, Brand, 2015 ([link](https://www.sciencedirect.com/science/article/pii/S0304397515001607))
  * _Solving Small-piece Jigsaw Puzzles by Growing Consensus_, Son et al., 2016 ([pdf](https://openaccess.thecvf.com/content_cvpr_2016/papers/Son_Solving_Small-Piece_Jigsaw_CVPR_2016_paper.pdf))
  * _Shotgun Assembly of Labeled Graphs_, Mossel and Ross, 2017 ([link](https://ieeexplore.ieee.org/abstract/document/8119552))
