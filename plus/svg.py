@@ -17,7 +17,7 @@ class Buffer:
             self.data.append("L {} {}".format(*a))
             return
 
-        # Odd types are female
+        # Even types are female
         if type % 2 == 0:
             right = -right
 
@@ -115,14 +115,16 @@ class Buffer:
         group = f'<g fill="none" stroke="red" stroke-width="{1 / scale}" transform="{transform}">{path}</g>'
         height = (self.height + 1) * scale
         width = (self.width + 1) * scale
-        content = f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">{group}</svg>'
+        content = f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#ffffff"/>{group}</svg>'
         file.write(content)
 
 
-matrix = np.array([[[0, 0, 0, 4], [3, 0, 0, 4], [0, 0, 4, 3]], [[3, 3, 0, 3], [3, 3, 4, 4], [0, 4, 4, 4]], [[4, 4, 0, 0], [4, 3, 3, 0], [0, 3, 3, 0]]])
+if __name__ == "__main__":
 
-buffer = Buffer()
-buffer.jigsaw(matrix)
+    matrix = np.array([[[0, 0, 0, 4], [3, 0, 0, 4], [0, 0, 4, 3]], [[3, 3, 0, 3], [3, 3, 4, 4], [0, 4, 4, 4]], [[4, 4, 0, 0], [4, 3, 3, 0], [0, 3, 3, 0]]])
 
-with open("foo.svg", "w") as file:
-    buffer.save(file)
+    buffer = Buffer()
+    buffer.jigsaw(matrix)
+
+    with open("foo.svg", "w") as file:
+        buffer.save(file)

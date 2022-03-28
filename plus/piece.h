@@ -33,11 +33,6 @@ inline constexpr unsigned flip(unsigned e) {
 }
 
 
-inline constexpr bool is_match(unsigned a, unsigned b) {
-    return a == opposite(b);
-}
-
-
 struct Piece {
     unsigned edges[4];
 
