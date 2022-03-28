@@ -3,105 +3,87 @@
 // g++ -g -O0 -std=c++17 -o main main.cpp
 
 
+#include <chrono>
 #include <cstdio>
 #include <cstdint>
+#include <mutex>
+#include <thread>
 
 #include "piece.h"
 #include "problem.h"
 #include "grid.h"
 
 
-int main(int argc, char* argv[]) {
+std::mutex lock;
+bool last_dot = true;
 
-    
-    Definition definition(5, 5);
-    definition.pieces[{3, 0, 0, 4}] += 1;
-    definition.pieces[{3, 0, 4, 2}] += 1;
-    definition.pieces[{4, 0, 4, 4}] += 1;
-    definition.pieces[{4, 0, 3, 1}] += 1;
-    definition.pieces[{0, 0, 3, 1}] += 1;
-    definition.pieces[{3, 3, 0, 4}] += 1;
-    definition.pieces[{0, 1, 4, 3}] += 1;
-    definition.pieces[{3, 3, 0, 0}] += 1;
-    definition.pieces[{2, 2, 4, 2}] += 1;
-    definition.pieces[{0, 2, 1, 1}] += 1;
-    definition.pieces[{3, 3, 0, 2}] += 1;
-    definition.pieces[{4, 4, 4, 3}] += 1;
-    definition.pieces[{3, 0, 3, 1}] += 1;
-    definition.pieces[{2, 1, 4, 4}] += 1;
-    definition.pieces[{0, 2, 1, 4}] += 1;
-    definition.pieces[{1, 1, 0, 1}] += 1;
-    definition.pieces[{2, 4, 2, 3}] += 1;
-    definition.pieces[{4, 2, 1, 1}] += 1;
-    definition.pieces[{1, 3, 3, 4}] += 1;
-    definition.pieces[{0, 3, 2, 2}] += 1;
-    definition.pieces[{2, 2, 0, 0}] += 1;
-    definition.pieces[{1, 4, 1, 0}] += 1;
-    definition.pieces[{1, 2, 2, 0}] += 1;
-    definition.pieces[{2, 3, 2, 0}] += 1;
-    definition.pieces[{0, 1, 1, 0}] += 1;
-    
-    Problem problem(definition);
-    
-    while (problem.next()) {
-        Grid grid = Grid::from_problem(problem);
-        grid.print();
-    }
-    printf("done\n");
-    
 
-/*
-    std::default_random_engine generator;
+void run(unsigned id) {
 
-    Grid grid(5, 5);
+    // Random device
+    // Note: using thread index to make sure nobody has the same seed
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    seed += 1337 * id;
+    std::default_random_engine generator(seed);
 
-    unsigned edges[] = {1, 2, 3, 4};
-    std::uniform_int_distribution<unsigned> distribution(0, sizeof(edges) / sizeof(edges[0]));
+    // Distribution over desired edge types
+    unsigned edges[] = {1, 2, 3, 4, 5, 6};
+    std::uniform_int_distribution<unsigned> distribution(0, sizeof(edges) / sizeof(edges[0]) - 1);
     auto sampler = [&]() { return edges[distribution(generator)]; };
 
-    std::map<Grid, unsigned> count;
-    uint64_t total_count = 0;
-    for (unsigned i = 0; i < 100000; ++i) {
-        while (grid.has_duplicate()) {
-            total_count++;
+    // Loop forever
+    while (true) {
+
+        // Generate random board, where all pieces are unique
+        Grid grid(5, 5);
+        do {
             grid.randomize(sampler);
+        } while (grid.has_duplicate());
+
+        // Create solver
+        Definition definition = grid.to_definition();
+        Problem problem(definition);
+
+        // Count solutions
+        // Note: by design, more than 8 solutions means that it is not unique
+        unsigned count = 0;
+        while (count < 9 && problem.next()) {
+            ++count;
         }
-        //grid.print();
-        //grid.print_canonical();
-        
-        count[grid.canonical()] += 1;
-        
-        grid.randomize(sampler);
-        total_count++;
+
+        // Show a dot on failure, as progress indication
+        if (count > 8) {
+            std::lock_guard<std::mutex> guard(lock);
+            putc('.', stdout);
+            last_dot = true;
+            continue;
+        }
+
+        // Report
+        {
+            std::lock_guard<std::mutex> guard(lock);
+            if (last_dot) {
+                last_dot = false;
+                putc('\n', stdout);
+            }
+            printf("%u ", count);
+            grid.print();
+        }
     }
-    
-    printf("%llu (%.02f%%)\n", total_count, total_count / 100000);
+}
 
-    std::map<unsigned, unsigned> k;
-    for (auto const & pair : count)
-        k[pair.second] += 1;
-    
-    for (auto const & pair : k)
-        printf("%u: %u\n", pair.first, pair.second);
-    
 
-    std::map<std::vector<Piece>, unsigned> q;
-    for (auto const & pair : count) {
-        std::vector<Piece> ps = pair.first.pieces();
-        for (Piece & p : ps)
-            p = p.canonical();
-        std::sort(ps.begin(), ps.end());
-        q[ps] += pair.second;
+constexpr unsigned num_threads = 1;
+
+int main(int argc, char* argv[]) {
+    if (num_threads <= 1)
+        run(0);
+    else {
+        std::thread threads[num_threads];
+        for (unsigned i = 0; i < num_threads; ++i)
+            threads[i] = std::thread(run, i);
+        for (unsigned i = 0; i < num_threads; ++i)
+            threads[i].join();
     }
-    
-    std::map<unsigned, unsigned> qk;
-    for (auto const & pair : q)
-        qk[pair.second] += 1;
-    
-    for (auto const & pair : qk)
-        printf("%u: %u\n", pair.first, pair.second);
-
-*/
-
     return 0;
 }
