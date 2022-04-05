@@ -37,6 +37,50 @@ class Type(IntEnum):
     TYPE_TWISTED_SMALL_FEMALE = 30
 
 
+MIRRORED_TYPES = {
+
+    # Centered
+    Type.TYPE_CENTERED_BIG_MALE: Type.TYPE_CENTERED_BIG_FEMALE,
+    Type.TYPE_CENTERED_BIG_FEMALE: Type.TYPE_CENTERED_BIG_MALE,
+    Type.TYPE_CENTERED_MEDIUM_MALE: Type.TYPE_CENTERED_MEDIUM_FEMALE,
+    Type.TYPE_CENTERED_MEDIUM_FEMALE: Type.TYPE_CENTERED_MEDIUM_MALE,
+    Type.TYPE_CENTERED_SMALL_MALE: Type.TYPE_CENTERED_SMALL_FEMALE,
+    Type.TYPE_CENTERED_SMALL_FEMALE: Type.TYPE_CENTERED_SMALL_MALE,
+
+    # Right-aligned
+    Type.TYPE_RIGHT_BIG_MALE: Type.TYPE_LEFT_BIG_FEMALE,
+    Type.TYPE_RIGHT_BIG_FEMALE: Type.TYPE_LEFT_BIG_MALE,
+    Type.TYPE_RIGHT_MEDIUM_MALE: Type.TYPE_LEFT_MEDIUM_FEMALE,
+    Type.TYPE_RIGHT_MEDIUM_FEMALE: Type.TYPE_LEFT_MEDIUM_MALE,
+    Type.TYPE_RIGHT_SMALL_MALE: Type.TYPE_LEFT_SMALL_FEMALE,
+    Type.TYPE_RIGHT_SMALL_FEMALE: Type.TYPE_LEFT_SMALL_MALE,
+
+    # Left-aligned
+    Type.TYPE_LEFT_BIG_MALE: Type.TYPE_RIGHT_BIG_FEMALE,
+    Type.TYPE_LEFT_BIG_FEMALE: Type.TYPE_RIGHT_BIG_MALE,
+    Type.TYPE_LEFT_MEDIUM_MALE: Type.TYPE_RIGHT_MEDIUM_FEMALE,
+    Type.TYPE_LEFT_MEDIUM_FEMALE: Type.TYPE_RIGHT_MEDIUM_MALE,
+    Type.TYPE_LEFT_SMALL_MALE: Type.TYPE_RIGHT_SMALL_FEMALE,
+    Type.TYPE_LEFT_SMALL_FEMALE: Type.TYPE_RIGHT_SMALL_MALE,
+
+    # Doubled (symmetric)
+    Type.TYPE_DOUBLE_BIG_MALE: Type.TYPE_DOUBLE_BIG_FEMALE,
+    Type.TYPE_DOUBLE_BIG_FEMALE: Type.TYPE_DOUBLE_BIG_MALE,
+    Type.TYPE_DOUBLE_MEDIUM_MALE: Type.TYPE_DOUBLE_MEDIUM_FEMALE,
+    Type.TYPE_DOUBLE_MEDIUM_FEMALE: Type.TYPE_DOUBLE_MEDIUM_MALE,
+    Type.TYPE_DOUBLE_SMALL_MALE: Type.TYPE_DOUBLE_SMALL_FEMALE,
+    Type.TYPE_DOUBLE_SMALL_FEMALE: Type.TYPE_DOUBLE_SMALL_MALE,
+
+    # Twisted (i.e. doubled, but with gender-swap)
+    Type.TYPE_TWISTED_BIG_MALE: Type.TYPE_TWISTED_BIG_MALE,
+    Type.TYPE_TWISTED_BIG_FEMALE: Type.TYPE_TWISTED_BIG_FEMALE,
+    Type.TYPE_TWISTED_MEDIUM_MALE: Type.TYPE_TWISTED_MEDIUM_MALE,
+    Type.TYPE_TWISTED_MEDIUM_FEMALE: Type.TYPE_TWISTED_MEDIUM_FEMALE,
+    Type.TYPE_TWISTED_SMALL_MALE: Type.TYPE_TWISTED_SMALL_MALE,
+    Type.TYPE_TWISTED_SMALL_FEMALE: Type.TYPE_TWISTED_SMALL_FEMALE,
+}
+
+
 class Buffer:
     def __init__(self, style="original"):
         self.style = style
@@ -305,13 +349,8 @@ class Buffer:
     def mirror_types(self, types):
         result = []
         for t in types:
-            if t > 0:
-                if t % 2 == 1:
-                    t += 1
-                else:
-                    t -= 1
-                # TODO beware of new types!
-            result.append(t)
+            m = MIRRORED_TYPES.get(t, t)
+            result.append(m)
         return result
 
     def jigsaw(self, matrix, margin=0.0):
