@@ -27,7 +27,20 @@ void run(unsigned id) {
     std::default_random_engine generator(seed);
 
     // Distribution over desired edge types
-    unsigned edges[] = {1, 2, 3, 4, 5, 6};
+    unsigned edges[] = {
+        TYPE_CENTERED_BIG_MALE,
+        TYPE_CENTERED_BIG_FEMALE,
+        TYPE_CENTERED_SMALL_MALE,
+        TYPE_CENTERED_SMALL_FEMALE,
+        TYPE_RIGHT_SMALL_MALE,
+        TYPE_RIGHT_SMALL_FEMALE,
+        TYPE_LEFT_SMALL_MALE,
+        TYPE_LEFT_SMALL_FEMALE,
+        TYPE_DOUBLE_SMALL_MALE,
+        TYPE_DOUBLE_SMALL_FEMALE,
+        TYPE_TWISTED_SMALL_MALE,
+        TYPE_TWISTED_SMALL_FEMALE,
+    };
     std::uniform_int_distribution<unsigned> distribution(0, sizeof(edges) / sizeof(edges[0]) - 1);
     auto sampler = [&]() { return edges[distribution(generator)]; };
 
@@ -35,9 +48,11 @@ void run(unsigned id) {
     while (true) {
 
         // Generate random board, where all pieces are unique
-        Grid grid(5, 5);
+        Grid grid(4, 4);
         do {
             grid.randomize(sampler);
+            //grid.horizontal[1 * 6 + 2] = 0;
+            //grid.vertical[2 * 5 + 2] = 0;
         } while (grid.has_duplicate());
 
         // Create solver
@@ -73,7 +88,7 @@ void run(unsigned id) {
 }
 
 
-constexpr unsigned num_threads = 1;
+constexpr unsigned num_threads = 16;
 
 int main(int argc, char* argv[]) {
     if (num_threads <= 1)

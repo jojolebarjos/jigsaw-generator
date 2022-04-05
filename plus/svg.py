@@ -1,29 +1,55 @@
+from enum import IntEnum
 
 import numpy as np
 
 
+class Type(IntEnum):
+    TYPE_FLAT = 0
+    TYPE_CENTERED_BIG_MALE = 1
+    TYPE_CENTERED_BIG_FEMALE = 2
+    TYPE_CENTERED_MEDIUM_MALE = 3
+    TYPE_CENTERED_MEDIUM_FEMALE = 4
+    TYPE_CENTERED_SMALL_MALE = 5
+    TYPE_CENTERED_SMALL_FEMALE = 6
+    TYPE_RIGHT_BIG_MALE = 7
+    TYPE_RIGHT_BIG_FEMALE = 8
+    TYPE_RIGHT_MEDIUM_MALE = 9
+    TYPE_RIGHT_MEDIUM_FEMALE = 10
+    TYPE_RIGHT_SMALL_MALE = 11
+    TYPE_RIGHT_SMALL_FEMALE = 12
+    TYPE_LEFT_BIG_MALE = 13
+    TYPE_LEFT_BIG_FEMALE = 14
+    TYPE_LEFT_MEDIUM_MALE = 15
+    TYPE_LEFT_MEDIUM_FEMALE = 16
+    TYPE_LEFT_SMALL_MALE = 17
+    TYPE_LEFT_SMALL_FEMALE = 18
+    TYPE_DOUBLE_BIG_MALE = 19
+    TYPE_DOUBLE_BIG_FEMALE = 20
+    TYPE_DOUBLE_MEDIUM_MALE = 21
+    TYPE_DOUBLE_MEDIUM_FEMALE = 22
+    TYPE_DOUBLE_SMALL_MALE = 23
+    TYPE_DOUBLE_SMALL_FEMALE = 24
+    TYPE_TWISTED_BIG_MALE = 25
+    TYPE_TWISTED_BIG_FEMALE = 26
+    TYPE_TWISTED_MEDIUM_MALE = 27
+    TYPE_TWISTED_MEDIUM_FEMALE = 28
+    TYPE_TWISTED_SMALL_MALE = 29
+    TYPE_TWISTED_SMALL_FEMALE = 30
+
+
 class Buffer:
-    def __init__(self, offset=0.2):
+    def __init__(self, style="original", offset=0.2):
+        self.style = style
         self.offset = offset
         self.data = []
         self.height = -1
         self.width = -1
 
-    def segment(self, type, origin, forward, right):
+    def flat_segment(self, origin, forward):
+        a = origin + forward
+        self.data.append("L {} {}".format(*a))
 
-        # Type 0 is flat
-        if type == 0:
-            a = origin + forward
-            self.data.append("L {} {}".format(*a))
-            return
-
-        # Even types are female
-        if type % 2 == 0:
-            right = -right
-
-        # Choose scale
-        index = (type - 1) // 2
-        unit = [0.45, 0.35, 0.25][index]
+    def circular_hook_segment(self, origin, forward, right, unit=0.35):
         offset = -self.offset * unit
 
         # Control points
@@ -67,6 +93,139 @@ class Buffer:
             q2 = q1 + right * offset
             self.data.append("C {} {}, {} {}, {} {}".format(*q2, *q1, *e))
 
+    def capsule_hook_segment(self, origin, forward, right, inner_radius, outer_radius, length, shift=0.0):
+        # TODO also use offset?
+
+        # Control points
+        a = origin + forward * (0.5 - 0.5 * length + shift)
+        b = a + right * (2.0 * inner_radius)
+        c = a + right * (2.0 * (inner_radius + outer_radius))
+        f = origin + forward * (0.5 + 0.5 * length + shift)
+        e = f + right * (2.0 * inner_radius)
+        d = f + right * (2.0 * (inner_radius + outer_radius))
+        g = origin + forward
+
+        # Which side to choose
+        cross = forward[0] * right[1] - forward[1] * right[0]
+        is_system_mirrored = cross < 0
+        if is_system_mirrored:
+            sweep = 0
+        else:
+            sweep = 1
+
+        # Draw capsule
+        self.data.append("L {} {}".format(*a))
+        self.data.append("A {} {} 0 0 {} {} {}".format(inner_radius, inner_radius, sweep, *b))
+        self.data.append("A {} {} 0 0 {} {} {}".format(outer_radius, outer_radius, 1 - sweep, *c))
+        self.data.append("L {} {}".format(*d))
+        self.data.append("A {} {} 0 0 {} {} {}".format(outer_radius, outer_radius, 1 - sweep, *e))
+        self.data.append("A {} {} 0 0 {} {} {}".format(inner_radius, inner_radius, sweep, *f))
+        self.data.append("L {} {}".format(*g))
+
+    def double_capsule_hook_segment(self, origin, forward, right, inner_radius, outer_radius, length, bias, twisted=False):
+        # TODO also use offset?
+
+        # Control points
+        twisted_right = -right if twisted else right
+        a = origin + forward * (0.5 - bias - 0.5 * length)
+        b = a + twisted_right * (2.0 * inner_radius)
+        c = a + twisted_right * (2.0 * (inner_radius + outer_radius))
+        f = origin + forward * (0.5 - bias + 0.5 * length)
+        e = f + twisted_right * (2.0 * inner_radius)
+        d = f + twisted_right * (2.0 * (inner_radius + outer_radius))
+        g = origin + forward * (0.5 + bias - 0.5 * length)
+        h = g + right * (2.0 * inner_radius)
+        i = g + right * (2.0 * (inner_radius + outer_radius))
+        l = origin + forward * (0.5 + bias + 0.5 * length)
+        k = l + right * (2.0 * inner_radius)
+        j = l + right * (2.0 * (inner_radius + outer_radius))
+        m = origin + forward
+
+        # Which side to choose
+        cross = forward[0] * right[1] - forward[1] * right[0]
+        is_system_mirrored = cross < 0
+        if is_system_mirrored:
+            sweep = 0
+        else:
+            sweep = 1
+        twisted_sweep = 1 - sweep if twisted else sweep
+
+        # Draw capsule
+        self.data.append("L {} {}".format(*a))
+        self.data.append("A {} {} 0 0 {} {} {}".format(inner_radius, inner_radius, twisted_sweep, *b))
+        self.data.append("A {} {} 0 0 {} {} {}".format(outer_radius, outer_radius, 1 - twisted_sweep, *c))
+        self.data.append("L {} {}".format(*d))
+        self.data.append("A {} {} 0 0 {} {} {}".format(outer_radius, outer_radius, 1 - twisted_sweep, *e))
+        self.data.append("A {} {} 0 0 {} {} {}".format(inner_radius, inner_radius, twisted_sweep, *f))
+        self.data.append("L {} {}".format(*g))
+        self.data.append("A {} {} 0 0 {} {} {}".format(inner_radius, inner_radius, sweep, *h))
+        self.data.append("A {} {} 0 0 {} {} {}".format(outer_radius, outer_radius, 1 - sweep, *i))
+        self.data.append("L {} {}".format(*j))
+        self.data.append("A {} {} 0 0 {} {} {}".format(outer_radius, outer_radius, 1 - sweep, *k))
+        self.data.append("A {} {} 0 0 {} {} {}".format(inner_radius, inner_radius, sweep, *l))
+        self.data.append("L {} {}".format(*m))
+
+    def segment(self, type, origin, forward, right):
+
+        # Type 0 is flat
+        if type == 0:
+            self.flat_segment(origin, forward)
+            return
+
+        # Circular-ish hooks
+        if self.style == "original":
+            if type % 2 == 0:
+                right = -right
+            index = (type - 1) // 2
+
+            # Centered
+            if 0 <= index < 3:
+                unit = [0.45, 0.35, 0.25][index]
+                self.circular_hook_segment(origin, forward, right, unit)
+                return
+
+        # Capsule-like hooks
+        if self.style == "capsule":
+            if type % 2 == 0:
+                right = -right
+            index = (type - 1) // 2
+            inner_radius = 0.03
+            outer_radius = 0.03
+
+            # Centered
+            # Note: medium size is discouraged, as it does not align nicely with the others
+            if 0 <= index < 3:
+                length = [0.6, 0.4, 0.2][index]
+                self.capsule_hook_segment(origin, forward, right, inner_radius, outer_radius, length)
+                return
+
+            # Right
+            # Note: only small one is supported, for space reasons
+            if index == 5:
+                self.capsule_hook_segment(origin, forward, right, inner_radius, outer_radius, 0.2, 0.2)
+                return
+
+            # Left
+            # Note: only small one is supported, for space reasons
+            if index == 8:
+                self.capsule_hook_segment(origin, forward, right, inner_radius, outer_radius, 0.2, -0.2)
+                return
+
+            # Double
+            # Note: only small one is supported, for space reasons
+            if index == 11:
+                self.double_capsule_hook_segment(origin, forward, right, inner_radius, outer_radius, 0.2, 0.2)
+                return
+
+            # Twisted
+            # Note: only small one is supported, for space reasons
+            if index == 14:
+                self.double_capsule_hook_segment(origin, forward, right, inner_radius, outer_radius, 0.2, 0.2, twisted=True)
+                return
+
+        # Anything else is not supported
+        raise KeyError(self.style, Type(type).name)
+
     def trace(self, types, origin, forward, right, margin):
         # Note: type belongs to the piece on the right!
         if margin > 0:
@@ -87,6 +246,7 @@ class Buffer:
                     t += 1
                 else:
                     t -= 1
+                # TODO beware of new types!
             result.append(t)
         return result
 
@@ -113,19 +273,24 @@ class Buffer:
         scale = 64
         transform = f"scale({scale}) translate(0.5 0.5)"
         group = f'<g fill="none" stroke="red" stroke-width="{1 / scale}" transform="{transform}">{path}</g>'
+        #group = '<rect width="100%" height="100%" fill="#ffffff"/>' + group
         height = (self.height + 1) * scale
         width = (self.width + 1) * scale
-        content = f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#ffffff"/>{group}</svg>'
+        content = f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">{group}</svg>'
         file.write(content)
 
 
 if __name__ == "__main__":
 
     #matrix = [[[0, 0, 0, 4], [3, 0, 0, 4], [0, 0, 4, 3]], [[3, 3, 0, 3], [3, 3, 4, 4], [0, 4, 4, 4]], [[4, 4, 0, 0], [4, 3, 3, 0], [0, 3, 3, 0]]]
-    matrix = [[[4, 0, 0, 4], [6, 0, 3, 5], [2, 0, 5, 3], [1, 0, 1, 4], [0, 0, 2, 5]], [[3, 3, 0, 6], [1, 6, 4, 6], [4, 4, 2, 4], [5, 3, 3, 5], [0, 6, 6, 4]], [[1, 5, 0, 1], [1, 5, 2, 5], [2, 3, 2, 1], [2, 6, 1, 5], [0, 3, 1, 2]], [[2, 2, 0, 2], [2, 6, 1, 4], [6, 2, 1, 2], [6, 6, 5, 3], [0, 1, 5, 2]], [[6, 1, 0, 0], [5, 3, 5, 0], [1, 1, 6, 0], [4, 4, 2, 0], [0, 1, 3, 0]]]
+    #matrix = [[[1, 0, 0, 4], [1, 0, 2, 1], [4, 0, 2, 4], [3, 0, 3, 4], [0, 0, 4, 5]], [[1, 3, 0, 3], [0, 2, 2, 1], [6, 3, 0, 0], [4, 3, 5, 2], [0, 6, 3, 5]], [[1, 4, 0, 5], [1, 2, 2, 3], [5, 0, 2, 5], [2, 1, 6, 5], [0, 6, 1, 3]], [[1, 6, 0, 2], [5, 4, 2, 1], [3, 6, 6, 5], [3, 6, 4, 5], [0, 4, 4, 1]], [[6, 1, 0, 0], [3, 2, 5, 0], [6, 6, 4, 0], [5, 6, 5, 0], [0, 2, 6, 0]]]
+    #matrix = [[[6, 0, 0, 5], [4, 0, 5, 3], [5, 0, 3, 6], [0, 0, 6, 3]], [[3, 6, 0, 5], [4, 4, 4, 4], [5, 5, 3, 6], [0, 4, 6, 4]], [[5, 6, 0, 6], [4, 3, 6, 3], [4, 5, 3, 3], [0, 3, 3, 3]], [[4, 5, 0, 0], [3, 4, 3, 0], [4, 4, 4, 0], [0, 4, 3, 0]]]
+    matrix = [[[2, 0, 0, 18], [1, 0, 1, 18], [17, 0, 2, 1], [0, 0, 12, 17]], [[24, 11, 0, 2], [24, 11, 23, 29], [12, 2, 23, 17], [0, 12, 17, 12]], [[18, 1, 0, 11], [30, 29, 11, 24], [23, 12, 30, 17], [0, 17, 24, 30]], [[29, 18, 0, 0], [6, 23, 29, 0], [23, 12, 5, 0], [0, 30, 24, 0]]]
     matrix = np.array(matrix)
 
-    buffer = Buffer()
+    #style = "original"
+    style = "capsule"
+    buffer = Buffer(style=style)
     buffer.jigsaw(matrix)
 
     with open("foo.svg", "w") as file:

@@ -160,13 +160,6 @@ struct Grid {
             }
         return grid;
     }
-
-    bool has_unique_solution() const {
-        Definition definition = to_definition();
-        Problem problem(definition);
-        //std::set<std::vector<
-        return false;
-    }
 };
 
 
