@@ -179,6 +179,68 @@ class Buffer:
             q2 = q1 + right * offset
             self.data.append("C {} {}, {} {}, {} {}".format(*q2, *q1, *e))
 
+    def double_circle_hook_segment(self, origin, forward, right, unit, bias, offset=0.0, twisted=False):
+
+        # Control points
+        k = np.sqrt(2)
+        twisted_right = -right if twisted else right
+        a1 = origin + forward * (0.5 - bias - 0.4 * unit) + twisted_right * offset
+        b1 = origin + forward * (0.5 - bias - 0.4 / k * unit) + twisted_right * (0.6 * unit - 0.4 / k * unit + offset)
+        c1 = origin + forward * (0.5 - bias + 0.4 / k * unit) + twisted_right * (0.6 * unit - 0.4 / k * unit + offset)
+        d1 = origin + forward * (0.5 - bias + 0.4 * unit) + twisted_right * offset
+        a2 = origin + forward * (0.5 + bias - 0.4 * unit) + right * offset
+        b2 = origin + forward * (0.5 + bias - 0.4 / k * unit) + right * (0.6 * unit - 0.4 / k * unit + offset)
+        c2 = origin + forward * (0.5 + bias + 0.4 / k * unit) + right * (0.6 * unit - 0.4 / k * unit + offset)
+        d2 = origin + forward * (0.5 + bias + 0.4 * unit) + right * offset
+        e = origin + forward
+
+        # Radii
+        r1 = 0.2 * unit
+        r2 = 0.4 * unit
+
+        # Which side to choose
+        cross = forward[0] * right[1] - forward[1] * right[0]
+        is_system_mirrored = cross < 0
+        if is_system_mirrored:
+            sweep = 0
+        else:
+            sweep = 1
+        twisted_sweep = 1 - sweep if twisted else sweep
+
+        # Slope to hook
+        if offset == 0:
+            self.data.append("L {} {}".format(*a1))
+        else:
+            q1 = origin + forward * (0.25 - bias * 0.5 - 0.2 * unit)
+            q2 = q1 + twisted_right * offset
+            self.data.append("C {} {}, {} {}, {} {}".format(*q1, *q2, *a1))
+
+        # Draw first hook
+        self.data.append("A {} {} 0 0 {} {} {}".format(r1, r1, twisted_sweep, *b1))
+        self.data.append("A {} {} 0 1 {} {} {}".format(r2, r2, 1 - twisted_sweep, *c1))
+        self.data.append("A {} {} 0 0 {} {} {}".format(r1, r1, twisted_sweep, *d1))
+
+        # Slope to second hook
+        if twisted and offset != 0:
+            q1 = origin + forward * 0.5 + twisted_right * offset
+            q2 = origin + forward * 0.5 + right * offset
+            self.data.append("C {} {}, {} {}, {} {}".format(*q1, *q2, *a2))
+        else:
+            self.data.append("L {} {}".format(*a2))
+
+        # Draw second hook
+        self.data.append("A {} {} 0 0 {} {} {}".format(r1, r1, sweep, *b2))
+        self.data.append("A {} {} 0 1 {} {} {}".format(r2, r2, 1 - sweep, *c2))
+        self.data.append("A {} {} 0 0 {} {} {}".format(r1, r1, sweep, *d2))
+
+        # Slope back to corner
+        if offset == 0:
+            self.data.append("L {} {}".format(*e))
+        else:
+            q1 = origin + forward * (0.75 + bias * 0.5 + 0.2 * unit)
+            q2 = q1 + right * offset
+            self.data.append("C {} {}, {} {}, {} {}".format(*q2, *q1, *e))
+
     def capsule_hook_segment(self, origin, forward, right, inner_radius, outer_radius, length, shift=0.0):
 
         # Control points
@@ -292,6 +354,18 @@ class Buffer:
                 self.circle_hook_segment(origin, forward, right, unit, offset, -0.15)
                 return
 
+            # Double
+            # Note: medium and large are typically too big...
+            if 9 <= index < 12:
+                self.double_circle_hook_segment(origin, forward, right, unit, unit * 0.6, offset)
+                return
+
+            # Twisted
+            # Note: medium and large are typically too big...
+            if 12 <= index < 15:
+                self.double_circle_hook_segment(origin, forward, right, unit, unit * 0.6, offset, twisted=True)
+                return
+
         # Capsule-like hooks
         if self.style == "capsule":
             if type % 2 == 0:
@@ -389,7 +463,8 @@ if __name__ == "__main__":
     #matrix = [[[1, 0, 0, 4], [1, 0, 2, 1], [4, 0, 2, 4], [3, 0, 3, 4], [0, 0, 4, 5]], [[1, 3, 0, 3], [0, 2, 2, 1], [6, 3, 0, 0], [4, 3, 5, 2], [0, 6, 3, 5]], [[1, 4, 0, 5], [1, 2, 2, 3], [5, 0, 2, 5], [2, 1, 6, 5], [0, 6, 1, 3]], [[1, 6, 0, 2], [5, 4, 2, 1], [3, 6, 6, 5], [3, 6, 4, 5], [0, 4, 4, 1]], [[6, 1, 0, 0], [3, 2, 5, 0], [6, 6, 4, 0], [5, 6, 5, 0], [0, 2, 6, 0]]]
     #matrix = [[[6, 0, 0, 5], [4, 0, 5, 3], [5, 0, 3, 6], [0, 0, 6, 3]], [[3, 6, 0, 5], [4, 4, 4, 4], [5, 5, 3, 6], [0, 4, 6, 4]], [[5, 6, 0, 6], [4, 3, 6, 3], [4, 5, 3, 3], [0, 3, 3, 3]], [[4, 5, 0, 0], [3, 4, 3, 0], [4, 4, 4, 0], [0, 4, 3, 0]]]
     #matrix = [[[2, 0, 0, 18], [1, 0, 1, 18], [17, 0, 2, 1], [0, 0, 12, 17]], [[24, 11, 0, 2], [24, 11, 23, 29], [12, 2, 23, 17], [0, 12, 17, 12]], [[18, 1, 0, 11], [30, 29, 11, 24], [23, 12, 30, 17], [0, 17, 24, 30]], [[29, 18, 0, 0], [6, 23, 29, 0], [23, 12, 5, 0], [0, 30, 24, 0]]]
-    matrix = [[[12, 0, 0, 11], [12, 0, 17, 6], [4, 0, 17, 5], [0, 0, 3, 4]], [[11, 18, 0, 11], [6, 5, 18, 5], [11, 6, 5, 11], [0, 3, 18, 5]], [[17, 18, 0, 5], [18, 6, 12, 5], [4, 18, 11, 11], [0, 6, 3, 11]], [[12, 6, 0, 0], [11, 6, 17, 0], [5, 18, 18, 0], [0, 18, 6, 0]]]
+    #matrix = [[[12, 0, 0, 11], [12, 0, 17, 6], [4, 0, 17, 5], [0, 0, 3, 4]], [[11, 18, 0, 11], [6, 5, 18, 5], [11, 6, 5, 11], [0, 3, 18, 5]], [[17, 18, 0, 5], [18, 6, 12, 5], [4, 18, 11, 11], [0, 6, 3, 11]], [[12, 6, 0, 0], [11, 6, 17, 0], [5, 18, 18, 0], [0, 18, 6, 0]]]
+    matrix = [[[23, 0, 0, 4], [23, 0, 24, 23], [18, 0, 24, 17], [0, 0, 11, 29]], [[29, 3, 0, 17], [23, 24, 29, 24], [5, 12, 24, 4], [0, 29, 6, 4]], [[29, 12, 0, 12], [3, 23, 29, 6], [18, 3, 4, 6], [0, 3, 11, 30]], [[4, 17, 0, 0], [6, 5, 3, 0], [5, 5, 5, 0], [0, 30, 6, 0]]]
     matrix = np.array(matrix)
 
     #style = "original"
