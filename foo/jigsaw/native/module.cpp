@@ -2,13 +2,10 @@
 #include "common.h"
 
 
-PyObject * Native_generate(PyObject * self, PyObject * args);
-
 extern PyTypeObject Problem_Type;
 
 
 static PyMethodDef methods[] = {
-    {"generate", Native_generate, METH_VARARGS, NULL},
     {NULL},
 };
 

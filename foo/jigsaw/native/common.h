@@ -10,9 +10,9 @@
 #define PY_ARRAY_UNIQUE_SYMBOL native_ARRAY_API
 #include <numpy/arrayobject.h>
 
-#include "../../../src/piece.h"
-#include "../../../src/problem.h"
-#include "../../../src/grid.h"
+#include "../../include/piece.h"
+#include "../../include/problem.h"
+#include "../../include/grid.h"
 
 
 #endif
