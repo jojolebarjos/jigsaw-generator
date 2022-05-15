@@ -197,6 +197,66 @@ class Buffer:
             q2 = q1 + right * offset
             self.data.append("C {} {}, {} {}, {} {}".format(*q2, *q1, *e))
 
+
+    def twisted_circle_hook_segment(self, origin, forward, right, unit, bias, offset=0.0):
+
+        center = origin + forward * 0.5
+
+        u = bias + 0.4 * unit
+        v = offset
+        n = np.sqrt(u * u + v * v)
+        u /= n
+        v /= n
+
+        axis_forward = u * forward + v * right
+        axis_right = -v * forward + u * right
+
+        k = np.sqrt(2)
+        a1 = center - axis_forward * (bias + 0.4 * unit)
+        b1 = center - axis_forward * (bias + 0.4 / k * unit) - axis_right * (0.6 * unit - 0.4 / k * unit)
+        c1 = center - axis_forward * (bias - 0.4 / k * unit) - axis_right * (0.6 * unit - 0.4 / k * unit)
+        d1 = center - axis_forward * (bias - 0.4 * unit)
+        a2 = center + axis_forward * (bias - 0.4 * unit)
+        b2 = center + axis_forward * (bias - 0.4 / k * unit) + axis_right * (0.6 * unit - 0.4 / k * unit)
+        c2 = center + axis_forward * (bias + 0.4 / k * unit) + axis_right * (0.6 * unit - 0.4 / k * unit)
+        d2 = center + axis_forward * (bias + 0.4 * unit)
+        e = origin + forward
+
+        # Radii
+        r1 = 0.2 * unit
+        r2 = 0.4 * unit
+
+        # Which side to choose
+        cross = forward[0] * right[1] - forward[1] * right[0]
+        is_system_mirrored = cross < 0
+        if is_system_mirrored:
+            sweep = 0
+        else:
+            sweep = 1
+
+        # Slope to hook
+        q1 = origin + forward * (0.25 - bias * 0.5 - 0.2 * unit)
+        q2 = center - axis_forward * (0.25 + bias * 0.5 + 0.2 * unit)
+        self.data.append("C {} {}, {} {}, {} {}".format(*q1, *q2, *a1))
+
+        # Draw first hook
+        self.data.append("A {} {} 0 0 {} {} {}".format(r1, r1, 1 - sweep, *b1))
+        self.data.append("A {} {} 0 1 {} {} {}".format(r2, r2, sweep, *c1))
+        self.data.append("A {} {} 0 0 {} {} {}".format(r1, r1, 1 - sweep, *d1))
+
+        # Slope to second hook
+        self.data.append("L {} {}".format(*a2))
+
+        # Draw second hook
+        self.data.append("A {} {} 0 0 {} {} {}".format(r1, r1, sweep, *b2))
+        self.data.append("A {} {} 0 1 {} {} {}".format(r2, r2, 1 - sweep, *c2))
+        self.data.append("A {} {} 0 0 {} {} {}".format(r1, r1, sweep, *d2))
+
+        # Slope back to corner
+        q1 = center + axis_forward * (0.25 + bias * 0.5 + 0.2 * unit)
+        q2 = origin + forward * (0.75 + bias * 0.5 + 0.2 * unit)
+        self.data.append("C {} {}, {} {}, {} {}".format(*q1, *q2, *e))
+
     def capsule_hook_segment(self, origin, forward, right, inner_radius, outer_radius, length, shift=0.0):
 
         # Control points
@@ -306,7 +366,8 @@ class Buffer:
             # Twisted
             # Note: medium and large are typically too big...
             if 12 <= index < 15:
-                self.double_circle_hook_segment(origin, forward, right, unit, unit * 0.6, offset, twisted=True)
+                #self.double_circle_hook_segment(origin, forward, right, unit, unit * 0.6, offset, twisted=True)
+                self.twisted_circle_hook_segment(origin, forward, right, unit, unit * 0.6, offset)
                 return
 
         # Capsule-like hooks
