@@ -1,7 +1,10 @@
+/build/
+.ipynb_checkpoints/
 *.exe
 *.jl
 *.o
 *.png
 *.pyc
+*.pyd
 *.svg
 *.txt

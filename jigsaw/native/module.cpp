@@ -50,7 +50,7 @@ static PyModuleDef_Slot slots[] = {
 
 static struct PyModuleDef module = {
     PyModuleDef_HEAD_INIT,
-    /* .m_name = */ "core_parser.native",
+    /* .m_name = */ "jigsaw.native",
     /* .m_doc = */ NULL,
     /* .m_size = */ 0,
     /* .m_methods = */ methods,

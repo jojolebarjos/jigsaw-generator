@@ -100,8 +100,8 @@ struct Problem {
         }
 
         // Get problem size
-        C = canonical_pieces.size();
-        N = transformed_pieces.size();
+        C = (uint8_t)canonical_pieces.size();
+        N = (uint8_t)transformed_pieces.size();
         H = definition.H;
         W = definition.W;
 
