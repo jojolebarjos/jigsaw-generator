@@ -34,8 +34,43 @@ def expand_edge_types(edge_types, opposite, flip):
     return edge_types
 
 
-def expand_pieces(pieces, flip):
-    ...
+def rotate_piece_cw(pieces):
+    return pieces[..., (1, 2, 3, 0)]
+
+
+def rotate_piece_ccw(pieces):
+    return pieces[..., (3, 0, 1, 2)]
+
+
+def flip_piece(pieces, flip):
+    return flip[pieces[..., (3, 2, 1, 0)]]
+
+
+def expand_pieces(pieces, flip, *, return_mapping=False):
+
+    # Flatten array of pieces
+    pieces = pieces.reshape(-1, 4)
+    N, _ = pieces.shape
+
+    # Instanciate all transformations
+    a = pieces
+    b = rotate_piece_cw(a)
+    c = rotate_piece_cw(b)
+    d = rotate_piece_cw(c)
+    e = flip_piece(pieces, flip)
+    f = rotate_piece_cw(e)
+    g = rotate_piece_cw(f)
+    h = rotate_piece_cw(g)
+    pieces = np.concatenate([a, b, c, d, e, f, g, h], axis=0)
+
+    # Deduplicate pieces
+    if return_mapping:
+        pieces, indices = np.unique(pieces, return_index=True, axis=0)
+        indices %= N
+        return pieces, indices
+    else:
+        pieces = np.unique(pieces, axis=0)
+        return pieces
 
 
 def smallest(x):
@@ -50,19 +85,7 @@ def smallest(x):
     return y
 
 
-def rotate_piece_cw(pieces):
-    return pieces[..., (1, 2, 3, 0)]
-
-
-def rotate_piece_ccw(pieces):
-    return pieces[..., (3, 0, 1, 2)]
-
-
-def flip_piece(pieces, flip):
-    return flip[pieces[..., (3, 2, 1, 0)]]
-
-
-def canonical_piece(pieces, flip):
+def canonize_piece(pieces, flip):
 
     # 8 possible transformations
     a = pieces
@@ -142,6 +165,21 @@ def pieces_to_grid(pieces, opposite):
     return horizontal_edges, vertical_edges
 
 
-# TODO rotate grid CW/CCW
-# TODO flip grid
-# TODO canonical grid
+def rotate_grid_cw(horizontal_edges, vertical_edges, opposite):
+    # TODO rotate grid CW
+    ...
+
+
+def rotate_grid_ccw(horizontal_edges, vertical_edges, opposite):
+    # TODO rotate grid CCW
+    ...
+
+
+def flip_grid(horizontal_edges, vertical_edges, opposite, flip):
+    # TODO flip grid
+    ...
+
+
+def canonize_grid(horizontal_edges, vertical_edges, opposite, flip):
+    # TODO canonical grid
+    ...

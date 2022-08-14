@@ -4,6 +4,8 @@ import numpy as np
 from numba import uint8, uintc
 from numba.experimental import jitclass
 
+from .transform import canonize_piece, expand_pieces
+
 
 spec = [
     ("C", uintc),
@@ -37,7 +39,9 @@ class Solver:
         self.has = 0
 
     def step(self):
-        
+
+        # TODO fix this
+
         # Loop until a solution is found
         while True:
 
@@ -61,7 +65,7 @@ class Solver:
                 self.stack[self.depth] = 0
                 continue
 
-            has = 0
+            self.has = 0
 
             # Check whether current depth is exhausted
             while self.stack[self.depth] == self.N - 1:
@@ -78,7 +82,7 @@ class Solver:
             self.stack[self.depth] += 1
 
 
-def iterate_solutions(C, N, H, W, count, canonical, accept, horizontal, vertical):
+def iterate_solver(C, N, H, W, count, canonical, accept, horizontal, vertical):
 
     assert count.shape == (C,)
     assert canonical.shape == (N,)
@@ -90,4 +94,64 @@ def iterate_solutions(C, N, H, W, count, canonical, accept, horizontal, vertical
 
     solver = Solver(C, N, H, W, count, canonical, accept, horizontal, vertical)
     while solver.step():
-        yield solver.stack[W:]
+        yield solver.stack[W:].reshape(H, W)
+
+
+def prepare_solver_arguments(H, W, pieces, opposite, flip, constraints=None, *, use_proper_types=True):
+
+    # Generate list of canonical pieces
+    pieces = pieces.reshape(-1, 4)
+    canonical_pieces = canonize_piece(pieces, flip)
+    canonical_pieces, count = np.unique(canonical_pieces, return_counts=True, axis=0)
+    C, _ = canonical_pieces.shape
+
+    # Expand all transformations
+    pieces, canonical = expand_pieces(canonical_pieces, flip, return_mapping=True)
+    N, _ = pieces.shape
+
+    # Create compatibility matrices
+    horizontal = pieces[:, None, 0] == opposite[pieces[None, :, 3]]
+    vertical = pieces[:, None, 3] == opposite[pieces[None, :, 1]]
+
+    # If there is no constraint, acceptance matrix is trivial
+    if constraints is None:
+        horizontal_constraints = np.full((H, W + 1), -1)
+        vertical_constraints = np.full((H + 1, W), -1)
+
+    # Special flag for typical flat border
+    elif constraints == "border":
+        horizontal_constraints = np.full((H, W + 1), -1)
+        vertical_constraints = np.full((H + 1, W), -1)
+        horizontal_constraints[:, [0, -1]] = 0
+        vertical_constraints[[0, -1], :] = 0
+
+    # Unpack expected arrays
+    else:
+        horizontal_constraints, vertical_constraints = constraints
+        assert horizontal_constraints.shape == (H, W + 1)
+        assert vertical_constraints.shape == (H + 1, W)
+
+    # Create acceptance matrix
+    a = (horizontal_constraints[:, 1:, None] < 0) | (horizontal_constraints[:, 1:, None] == opposite[pieces[None, None, :, 0]])
+    b = (vertical_constraints[:-1, :, None] < 0) | (vertical_constraints[:-1, :, None] == opposite[pieces[None, None, :, 1]])
+    c = (horizontal_constraints[:, :-1, None] < 0) | (horizontal_constraints[:, :-1, None] == pieces[None, None, :, 2])
+    d = (vertical_constraints[1:, :, None] < 0) | (vertical_constraints[1:, :, None] == pieces[None, None, :, 3])
+    accept = a & b & c & d
+
+    # Make sure we are using the expected types
+    if use_proper_types:
+        count = count.astype(np.uint8)
+        canonical = canonical.astype(np.uint8)
+        horizontal = horizontal.astype(np.uint8)
+        vertical = vertical.astype(np.uint8)
+        accept = accept.astype(np.uint8)
+
+    return pieces, C, N, count, canonical, accept, horizontal, vertical
+
+
+def iterate_solutions(H, W, pieces, flip, opposite, constraints=None):
+    pieces, C, N, count, canonical, accept, horizontal, vertical = prepare_solver_arguments(H, W, pieces, flip, opposite, constraints)
+    for stack in iterate_solver(C, N, H, W, count, canonical, accept, horizontal, vertical):
+        indices = stack.reshape(H, W)
+        grid = pieces_to_grid(pieces[indices], opposite)
+        yield grid

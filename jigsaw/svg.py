@@ -116,6 +116,7 @@ class CircleStyle(Style):
         e = origin + forward
 
         # Radii
+        # TODO handle when forward and right have different lengths
         r = np.sqrt((forward ** 2).sum())
         r1 = 0.2 * unit * r
         r2 = 0.4 * unit * r
@@ -184,12 +185,12 @@ class CircleStyle(Style):
 
         # Right
         if 3 <= index < 6:
-            self.trace_single(data, origin, forward, right, unit=unit, offset=offset, shift=0.15)
+            self.trace_single(data, origin, forward, right, unit=unit, offset=offset, shift=-0.15)
             return
 
         # Left
         if 6 <= index < 9:
-            self.trace_single(data, origin, forward, right, unit=unit, offset=offset, shift=-0.15)
+            self.trace_single(data, origin, forward, right, unit=unit, offset=offset, shift=0.15)
             return
 
         # Double
@@ -220,7 +221,7 @@ def get_style(style=None):
     raise KeyError(style)
 
 
-def to_svg(horizontal_edges, vertical_edges, *, style=None, scale=32.0, margin=0.0):
+def grid_to_svg(horizontal_edges, vertical_edges, *, style=None, scale=64.0, margin=0.25):
 
     H, _ = horizontal_edges.shape
     _, W = vertical_edges.shape
@@ -246,3 +247,16 @@ def to_svg(horizontal_edges, vertical_edges, *, style=None, scale=32.0, margin=0
     group = f'<g transform="translate({scale*0.5} {scale*0.5})">{path}</g>'
     code = f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">{group}</svg>'
     return code
+
+
+# TODO pieces_to_svg
+
+
+def display_grid(horizontal_edges, vertical_edges, *, style=None, scale=64.0, margin=0.25):
+    from IPython.core.display import HTML, display
+    svg = grid_to_svg(horizontal_edges, vertical_edges, style=style, scale=scale, margin=margin)
+    widget = HTML(f'<div style="padding:1em">{svg}<div>')
+    display(widget)
+
+
+# TODO display_pieces
