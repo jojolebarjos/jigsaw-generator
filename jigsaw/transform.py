@@ -166,18 +166,21 @@ def pieces_to_grid(pieces, opposite):
 
 
 def rotate_grid_cw(horizontal_edges, vertical_edges, opposite):
-    # TODO rotate grid CW
-    ...
+    h = np.rot90(vertical_edges, k=3)
+    v = opposite[np.rot90(horizontal_edges, k=3)]
+    return h, v
 
 
 def rotate_grid_ccw(horizontal_edges, vertical_edges, opposite):
-    # TODO rotate grid CCW
-    ...
+    h = opposite[np.rot90(vertical_edges)]
+    v = np.rot90(horizontal_edges)
+    return h, v
 
 
 def flip_grid(horizontal_edges, vertical_edges, opposite, flip):
-    # TODO flip grid
-    ...
+    h = opposite[flip[vertical_edges]].T
+    v = opposite[flip[horizontal_edges]].T
+    return h, v
 
 
 def canonize_grid(horizontal_edges, vertical_edges, opposite, flip):

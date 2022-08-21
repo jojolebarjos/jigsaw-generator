@@ -4,7 +4,7 @@ import numpy as np
 from numba import uint8, uintc
 from numba.experimental import jitclass
 
-from .transform import canonize_piece, expand_pieces
+from .transform import canonize_piece, expand_pieces, pieces_to_grid
 
 
 spec = [
@@ -34,28 +34,26 @@ class Solver:
         self.accept = accept
         self.horizontal = horizontal
         self.vertical = vertical
-        self.stack = np.zeros((H + 1) * W, dtype=np.uint8)
-        self.depth = W
+        self.stack = np.zeros(H * W, dtype=np.uint8)
+        self.depth = 0
         self.has = 0
 
     def step(self):
-
-        # TODO fix this
 
         # Loop until a solution is found
         while True:
 
             # Check whether current piece matches
             if (
-                self.has and
+                not self.has and
                 self.count[self.canonical[self.stack[self.depth]]] and
-                self.accept[self.depth - self.W, self.stack[self.depth]] and
-                self.horizontal[self.stack[self.depth - 1], self.stack[self.depth]] and
-                self.vertical[self.stack[self.depth - self.W], self.stack[self.depth]]
+                self.accept[self.depth, self.stack[self.depth]] and
+                (self.depth % self.W == 0 or self.horizontal[self.stack[self.depth - 1], self.stack[self.depth]]) and
+                (self.depth < self.W or self.vertical[self.stack[self.depth - self.W], self.stack[self.depth]])
             ):
 
                 # If board is full, we have a solution
-                if self.depth == (self.H + 1) * self.W - 1:
+                if self.depth == self.H * self.W - 1:
                     self.has = 1
                     return 1
 
@@ -71,7 +69,7 @@ class Solver:
             while self.stack[self.depth] == self.N - 1:
 
                 # Search is complete
-                if self.depth == self.W:
+                if self.depth == 0:
                     return 0
 
                 # Backtrack one depth level
@@ -94,7 +92,7 @@ def iterate_solver(C, N, H, W, count, canonical, accept, horizontal, vertical):
 
     solver = Solver(C, N, H, W, count, canonical, accept, horizontal, vertical)
     while solver.step():
-        yield solver.stack[W:].reshape(H, W)
+        yield solver.stack.reshape(H, W)
 
 
 def prepare_solver_arguments(H, W, pieces, opposite, flip, constraints=None, *, use_proper_types=True):
@@ -110,7 +108,7 @@ def prepare_solver_arguments(H, W, pieces, opposite, flip, constraints=None, *, 
     N, _ = pieces.shape
 
     # Create compatibility matrices
-    horizontal = pieces[:, None, 0] == opposite[pieces[None, :, 3]]
+    horizontal = pieces[:, None, 0] == opposite[pieces[None, :, 2]]
     vertical = pieces[:, None, 3] == opposite[pieces[None, :, 1]]
 
     # If there is no constraint, acceptance matrix is trivial
@@ -150,7 +148,7 @@ def prepare_solver_arguments(H, W, pieces, opposite, flip, constraints=None, *, 
 
 
 def iterate_solutions(H, W, pieces, flip, opposite, constraints=None):
-    pieces, C, N, count, canonical, accept, horizontal, vertical = prepare_solver_arguments(H, W, pieces, flip, opposite, constraints)
+    pieces, C, N, count, canonical, accept, horizontal, vertical = prepare_solver_arguments(H, W, pieces, opposite, flip, constraints)
     for stack in iterate_solver(C, N, H, W, count, canonical, accept, horizontal, vertical):
         indices = stack.reshape(H, W)
         grid = pieces_to_grid(pieces[indices], opposite)
