@@ -34,16 +34,53 @@ def expand_edge_types(edge_types, opposite, flip):
     return edge_types
 
 
-def rotate_piece_cw(pieces):
-    return pieces[..., (1, 2, 3, 0)]
+def rotate_piece(pieces, k=1):
+    """Rotate piece by k times 90°, counter-clockwise."""
+
+    k = k % 4
+    if k == 1:
+        return rotate_piece_90(pieces)
+    if k == 2:
+        return rotate_piece_180(pieces)
+    if k == 3:
+        return rotate_piece_270(pieces)
+    return pieces
 
 
-def rotate_piece_ccw(pieces):
+def rotate_piece_90(pieces):
+    """Rotate piece by 90°, counter-clockwise."""
+
     return pieces[..., (3, 0, 1, 2)]
 
 
+def rotate_piece_180(pieces):
+    """Rotate piece by 180°, counter-clockwise."""
+
+    return pieces[..., (2, 3, 0, 1)]
+
+
+def rotate_piece_270(pieces):
+    """Rotate piece by 270°, counter-clockwise."""
+
+    return pieces[..., (1, 2, 3, 0)]
+
+
 def flip_piece(pieces, flip):
+    """Flip piece diagonally."""
+
     return flip[pieces[..., (3, 2, 1, 0)]]
+
+
+def flip_piece_h(pieces, flip):
+    """Flip piece horizontally."""
+
+    return flip[pieces[..., (2, 1, 0, 3)]]
+
+
+def flip_piece_v(pieces, flip):
+    """Flip piece vertically."""
+
+    return flip[pieces[..., (0, 3, 2, 1)]]
 
 
 def expand_pieces(pieces, flip, *, return_mapping=False):
@@ -54,13 +91,13 @@ def expand_pieces(pieces, flip, *, return_mapping=False):
 
     # Instanciate all transformations
     a = pieces
-    b = rotate_piece_cw(a)
-    c = rotate_piece_cw(b)
-    d = rotate_piece_cw(c)
+    b = rotate_piece_90(a)
+    c = rotate_piece_90(b)
+    d = rotate_piece_90(c)
     e = flip_piece(pieces, flip)
-    f = rotate_piece_cw(e)
-    g = rotate_piece_cw(f)
-    h = rotate_piece_cw(g)
+    f = rotate_piece_90(e)
+    g = rotate_piece_90(f)
+    h = rotate_piece_90(g)
     pieces = np.concatenate([a, b, c, d, e, f, g, h], axis=0)
 
     # Deduplicate pieces
@@ -73,7 +110,7 @@ def expand_pieces(pieces, flip, *, return_mapping=False):
         return pieces
 
 
-def smallest(x):
+def _smallest(x):
     *S, T, D = x.shape
     x = x.reshape(-1, T, D)
     N, _, _ = x.shape
@@ -89,17 +126,17 @@ def canonize_piece(pieces, flip):
 
     # 8 possible transformations
     a = pieces
-    b = rotate_piece_cw(a)
-    c = rotate_piece_cw(b)
-    d = rotate_piece_cw(c)
-    e = flip_piece(pieces, flip)
-    f = rotate_piece_cw(e)
-    g = rotate_piece_cw(f)
-    h = rotate_piece_cw(g)
+    b = rotate_piece_90(a)
+    c = rotate_piece_90(b)
+    d = rotate_piece_90(c)
+    e = flip_piece(a, flip)
+    f = rotate_piece_90(e)
+    g = rotate_piece_90(f)
+    h = rotate_piece_90(g)
     x = np.stack((a, b, c, d, e, f, g, h), axis=-2)
     
     # Select lexicographically smallest transformation
-    y = smallest(x)
+    y = _smallest(x)
     return y
 
 
@@ -131,7 +168,11 @@ def build_random_grid(H, W, K, *, generator=None, border=0):
     return horizontal_edges, vertical_edges
 
 
+# TODO vectorize grid methods?
+
+
 def grid_to_pieces(horizontal_edges, vertical_edges, opposite):
+    """Convert grid to pieces."""
 
     H, _ = horizontal_edges.shape
     _, W = vertical_edges.shape
@@ -148,6 +189,7 @@ def grid_to_pieces(horizontal_edges, vertical_edges, opposite):
 
 
 def pieces_to_grid(pieces, opposite):
+    """Convert pieces to grid."""
 
     H, W, D = pieces.shape
     assert D == 4
@@ -165,24 +207,104 @@ def pieces_to_grid(pieces, opposite):
     return horizontal_edges, vertical_edges
 
 
-def rotate_grid_cw(horizontal_edges, vertical_edges, opposite):
-    h = np.rot90(vertical_edges, k=3)
-    v = opposite[np.rot90(horizontal_edges, k=3)]
-    return h, v
+def rotate_grid(horizontal_edges, vertical_edges, opposite, k=1):
+    """Rotate grid by k times 90°, counter-clockwise."""
+
+    k = k % 4
+    if k == 1:
+        return rotate_grid_90(horizontal_edges, vertical_edges, opposite)
+    if k == 2:
+        return rotate_grid_180(horizontal_edges, vertical_edges, opposite)
+    if k == 3:
+        return rotate_grid_270(horizontal_edges, vertical_edges, opposite)
+    return horizontal_edges, vertical_edges
 
 
-def rotate_grid_ccw(horizontal_edges, vertical_edges, opposite):
+def rotate_grid_90(horizontal_edges, vertical_edges, opposite):
+    """Rotate grid by 90°, counter-clockwise."""
+
     h = opposite[np.rot90(vertical_edges)]
     v = np.rot90(horizontal_edges)
     return h, v
 
 
+def rotate_grid_180(horizontal_edges, vertical_edges, opposite):
+    """Rotate grid by 180°, counter-clockwise."""
+
+    h = opposite[np.rot90(horizontal_edges, k=2)]
+    v = opposite[np.rot90(vertical_edges, k=2)]
+    return h, v
+
+
+def rotate_grid_270(horizontal_edges, vertical_edges, opposite):
+    """Rotate grid by 270°, counter-clockwise."""
+
+    h = np.rot90(vertical_edges, k=3)
+    v = opposite[np.rot90(horizontal_edges, k=3)]
+    return h, v
+
+
 def flip_grid(horizontal_edges, vertical_edges, opposite, flip):
+    """Flip grid diagonally."""
+
     h = opposite[flip[vertical_edges]].T
     v = opposite[flip[horizontal_edges]].T
     return h, v
 
 
+def flip_grid_h(horizontal_edges, vertical_edges, opposite, flip):
+    """Flip grid horizontally."""
+
+    h = flip[opposite[horizontal_edges[:, ::-1]]]
+    v = flip[vertical_edges[:, ::-1]]
+    return h, v
+
+
+def flip_grid_v(horizontal_edges, vertical_edges, opposite, flip):
+    """Flip grid vertically."""
+
+    h = flip[horizontal_edges[::-1, :]]
+    v = flip[opposite[vertical_edges[::-1, :]]]
+    return h, v
+
+
 def canonize_grid(horizontal_edges, vertical_edges, opposite, flip):
-    # TODO canonical grid
-    ...
+
+    H, _ = horizontal_edges.shape
+    _, W = vertical_edges.shape
+    assert horizontal_edges.shape == (H, W + 1)
+    assert vertical_edges.shape == (H + 1, W)
+
+    a = horizontal_edges, vertical_edges
+
+    # 8 possible transformations for square grids
+    if H == W:
+        b = rotate_grid_90(*a, opposite)
+        c = rotate_grid_90(*b, opposite)
+        d = rotate_grid_90(*c, opposite)
+        e = flip_grid(*a, opposite, flip)
+        f = rotate_grid_90(*e, opposite)
+        g = rotate_grid_90(*f, opposite)
+        h = rotate_grid_90(*g, opposite)
+        ts = (a, b, c, d, e, f, g, h)
+
+    else:
+
+        # Rectangular grids are always tall in canonical form (i.e. H > W)
+        if H < W:
+            a = rotate_grid_cw(*a, opposite)
+            H, W = W, H
+
+        # 4 possible transformations for rectangular grids
+        b = rotate_grid_180(*a, opposite)
+        c = flip_grid_h(*a, opposite, flip)
+        d = rotate_grid_180(*c, opposite)
+        ts = (a, b, c, d)
+
+    # Flatten and pack as a single matrix
+    m = np.stack([np.concatenate([t[0].reshape(-1), t[1].reshape(-1)]) for t in ts])
+
+    # Sort and take the smallest one
+    indices = np.lexsort(m.T)
+    t = ts[indices[0]]
+    return t

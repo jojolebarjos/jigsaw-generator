@@ -147,7 +147,7 @@ def prepare_solver_arguments(H, W, pieces, opposite, flip, constraints=None, *, 
     return pieces, C, N, count, canonical, accept, horizontal, vertical
 
 
-def iterate_solutions(H, W, pieces, flip, opposite, constraints=None):
+def iterate_solutions(H, W, pieces, opposite, flip, constraints=None):
     pieces, C, N, count, canonical, accept, horizontal, vertical = prepare_solver_arguments(H, W, pieces, opposite, flip, constraints)
     for stack in iterate_solver(C, N, H, W, count, canonical, accept, horizontal, vertical):
         indices = stack.reshape(H, W)
