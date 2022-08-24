@@ -28,17 +28,3 @@ def sample_random_grid(H, W, K, *, generator=None, border=0):
         vertical_edges[-1, :] = border
 
     return horizontal_edges, vertical_edges
-
-
-def sample_unique_grid(sampler, opposite, flip, *, max_iterations=None, constraints=None, on_sample=None):
-    if on_sample == "tqdm":
-        from tqdm import tqdm
-    while True:
-        horizontal_edges, vertical_edges = sample()
-        pieces = grid_to_pieces(horizontal_edges, vertical_edges, opposite)
-        try:
-            return get_unique_solution(H, W, pieces, opposite, flip, constraints="border")
-        except:
-            continue
-        finally:
-            on_sample()
