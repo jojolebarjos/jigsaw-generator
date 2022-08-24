@@ -4,7 +4,7 @@ import numpy as np
 from numba import uint8, uintc
 from numba.experimental import jitclass
 
-from .transform import canonize_piece, expand_pieces, pieces_to_grid
+from .transform import canonize_piece, expand_pieces, pieces_to_grid, canonize_grid
 
 
 spec = [
@@ -22,6 +22,7 @@ spec = [
     ("has", uint8),
 ]
 
+# TODO nogil
 @jitclass(spec)
 class Solver:
     def __init__(self, C, N, H, W, count, canonical, accept, horizontal, vertical):
@@ -153,3 +154,35 @@ def iterate_solutions(H, W, pieces, opposite, flip, constraints=None):
         indices = stack.reshape(H, W)
         grid = pieces_to_grid(pieces[indices], opposite)
         yield grid
+
+
+def iterate_unique_solutions(H, W, pieces, opposite, flip, constraints=None):
+    keys = set()
+    for grid in iterate_solutions(H, W, pieces, opposite, flip, constraints):
+        h, v = canonize_grid(*grid, opposite, flip)
+        h = tuple(h.reshape(-1).tolist())
+        v = tuple(v.reshape(-1).tolist())
+        key = h + v
+        if key in keys:
+            continue
+        keys.add(key)
+        yield grid
+
+
+def get_unique_solution(H, W, pieces, opposite, flip, constraints=None):
+    iterator = iterate_unique_solutions(H, W, pieces, opposite, flip, constraints)
+    first_grid = next(iterator, None)
+    if first_grid is None:
+        raise RuntimeError("no solution")
+    second_grid = next(iterator, None)
+    if second_grid is not None:
+        raise RuntimeError("solution is not unique")
+    return first_grid
+
+
+def has_unique_solution(H, W, pieces, opposite, flip, constraints=None):
+    try:
+        get_unique_solution(H, W, pieces, opposite, flip, constraints)
+    except:
+        return False
+    return True

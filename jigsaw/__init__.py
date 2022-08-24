@@ -10,7 +10,6 @@ from .transform import (
     flip_piece_v,
     expand_pieces,
     canonize_piece,
-    build_random_grid,
     grid_to_pieces,
     pieces_to_grid,
     rotate_grid,
@@ -28,4 +27,11 @@ from .solver import (
     iterate_solver,
     prepare_solver_arguments,
     iterate_solutions,
+    iterate_unique_solutions,
+    get_unique_solution,
+    has_unique_solution,
+)
+
+from .sample import (
+    sample_random_grid,
 )
