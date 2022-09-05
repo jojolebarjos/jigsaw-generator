@@ -4,6 +4,30 @@ import numpy as np
 
 class Style:
 
+    def trace_flat(self, data, origin, forward, right):
+
+        # Control points
+        a = origin + forward
+
+        # Single line to target
+        data.append("L {} {}".format(*a))
+
+    def trace_unknown(self, data, origin, forward, right):
+
+        # Control points
+        a = origin + forward * 0.2
+        b = origin + forward * 0.4
+        c = origin + forward * 0.6
+        d = origin + forward * 0.8
+        e = origin + forward
+
+        # Dashed line to target
+        data.append("L {} {}".format(*a))
+        data.append("M {} {}".format(*b))
+        data.append("L {} {}".format(*c))
+        data.append("M {} {}".format(*d))
+        data.append("L {} {}".format(*e))
+
     def trace_edge(self, data, edge, origin, forward, right):
         raise NotImplementedError("trace_edge")
 
@@ -46,14 +70,6 @@ class Style:
 
 
 class CircleStyle(Style):
-
-    def trace_flat(self, data, origin, forward, right):
-
-        # Control points
-        a = origin + forward
-
-        # Single line to target
-        data.append("L {} {}".format(*a))
 
     def trace_single(self, data, origin, forward, right, *, unit=0.25, offset=0.0, shift=0.0):
 
@@ -165,6 +181,11 @@ class CircleStyle(Style):
             data.append("C {} {}, {} {}, {} {}".format(*q2, *q1, *e))
 
     def trace_edge(self, data, edge, origin, forward, right):
+
+        # Special case, to render constraints as well
+        if edge == -1 or edge == 255:
+            self.trace_unknown(data, origin, forward, right)
+            return
 
         # Flat
         if edge == 0:
