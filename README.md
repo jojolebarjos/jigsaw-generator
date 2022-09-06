@@ -20,28 +20,7 @@ Hence, the approach here is to brute force all combinations, effectively countin
 
 ## Getting started
 
-The entry point is [`src/main.cpp`](src/main.cpp), which you will need to tweak according to your needs.
-In its current form, this is a multithreaded infinite loop, which outputs JSON lines to the standard output.
-Each line is a single jigsaw puzzle, guaranteed to have a single solution.
-
- 1. First, a set of edge types is selected.
-    See [`src/piece.h`](src/piece.h) for the actual definition, which is mainly a matter of how types can be combined.
- 2. Then, a grid of desired size is created and edges are randomized.
-    By design, this jigsaw puzzle has a solution.
- 3. Finally, an exhaustive search is done to count how many solutions exist.
-    There are usually 8 possible transformations of a board (4 rotations, 2 sides).
-    Therefore, having more than that means the solution is not unique.
-
-A Python script, [`src/svg.py`](src/svg.py), is available to generate a SVG.
-
-
-## Examples
-
-```
-[[[4, 0, 0, 5], [5, 0, 3, 3], [4, 0, 6, 6], [0, 0, 3, 3]], [[3, 6, 0, 4], [6, 4, 4, 5], [6, 5, 5, 5], [0, 4, 5, 3]], [[4, 3, 0, 6], [4, 6, 3, 6], [3, 6, 3, 5], [0, 4, 4, 5]], [[6, 5, 0, 0], [4, 5, 5, 0], [3, 6, 3, 0], [0, 6, 4, 0]]]
-```
-
-![4x4 simple](img/4x4_simple.svg)
+...
 
 
 ## References
