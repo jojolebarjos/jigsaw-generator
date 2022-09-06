@@ -276,7 +276,7 @@ def grid_to_svg(horizontal_edges, vertical_edges, *, style=None, scale=64.0, mar
 def display_grid(horizontal_edges, vertical_edges, *, style=None, scale=64.0, margin=0.25):
     from IPython.core.display import HTML, display
     svg = grid_to_svg(horizontal_edges, vertical_edges, style=style, scale=scale, margin=margin)
-    widget = HTML(f'<div style="padding:1em">{svg}<div>')
+    widget = HTML(f'<div style="padding:1em">{svg}</div>')
     display(widget)
 
 
