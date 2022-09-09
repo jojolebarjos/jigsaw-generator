@@ -13,8 +13,8 @@ def sample_random_grid(H, W, K, *, generator=None, border=0):
 
     # Generate random indices
     generator = np.random.default_rng(generator)
-    horizontal_edges = generator.integers(1, K, size=(H, W + 1), dtype=np.uint8)
-    vertical_edges = generator.integers(1, K, size=(H + 1, W), dtype=np.uint8)
+    horizontal_edges = generator.integers(0, K, size=(H, W + 1), dtype=np.uint8)
+    vertical_edges = generator.integers(0, K, size=(H + 1, W), dtype=np.uint8)
 
     # Map to edge types
     horizontal_edges = edge_types[horizontal_edges]
