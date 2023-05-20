@@ -20,7 +20,40 @@ Hence, the approach here is to brute force all combinations, effectively countin
 
 ## Getting started
 
-...
+First of all, this project is meant as an experiment, and is therefore not expected to be flexible, nor robust.
+Still, feel free to play with the provided helpers!
+
+In this project, jigsaw puzzles are 2D grids of square pieces, where edges belong to a finite (and typically small) set.
+While the helpers are typically agnostic about the actual shape of the edge types, this discussion will assume that the definitions from `jigsaw.default` are used.
+This provides a definition for `opposite` and `flip`, the two operations required to infer how edges can connect.
+
+Currently, low-level functions are provided, in order to manipulate 2D grids.
+There are two main representations, depending on the context:
+
+ * __Edge-wise__, referred as _grid_, which is a pair of 2D arrays, representing horizontal and vertical edges, of shape H x (W + 1) and (H + 1) x W, respectively.
+ * __Piece-wise, referred as _pieces_, which is a single 3D array, representing a 2D array of pieces, of shape H x W x 4.
+
+While the former has the advantage of not duplicating any information (and therefore should be usually preferred), the latter is used during the search, as pieces are manipulated explicitly.
+A basic usage is showcased in [`getting_started.ipynb`](getting_started.ipynb).
+
+A more scalable approach is provided in [`attempt_01.ipynb`](attempt_01.ipynb); as the name implies, this is not well-tested, but it has proved sufficient until now.
+The overall flow is as follow:
+
+ 1. Define a sampler, which is a parameter-less functor that will return a new random grid.
+ 2. Optionally define custom validators; usually if this is easier to implement a rule as a test instead of a sampling strategy.
+ 3. Search for a sample that is successfully validated.
+    The uniqueness of the solution is usually the last validator to be applied.
+
+The number of solution roughly depends on the ratio of the number of edge types and the number of pieces.
+On the one hand, if there are too many edge types, then there is almost surely a single (and often easy) solution.
+On the other hand, if there are too few edge types, then there are almost surely many solution; if uniqueness is requested, this will not converge.
+
+I believe there is no bulletproof strategy here, finding the right balance is trial-and-error.
+The key challenge is to make a puzzle that is enjoyable, and not just pure brute-force.
+Remembering which combinations of pieces have been tested may very well be a nightmare, so be sure to add a "strategy" in your design.
+Number 8 in [`attempt_01.ipynb`](attempt_01.ipynb) is a good example, where counting the types of edges can show which corner and border pieces are in the central area:
+
+![4x4 with 5th corner](image/4x4_5th.png | width=100)
 
 
 ## References
