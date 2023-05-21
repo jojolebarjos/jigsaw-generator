@@ -55,7 +55,7 @@ The key challenge is to make a puzzle that is enjoyable, and not just pure brute
 Remembering which combinations of pieces have been tested may very well be a nightmare, so be sure to add a "strategy" in your design.
 Number 8 in [`attempt_01.ipynb`](attempt_01.ipynb) is a good example, where counting the types of edges can show which corner and border pieces are in the central area:
 
-<img src="image/attempt_01_8_001.png" width="100" height="100" alt="4x4 with 5th corner">
+<img src="image/attempt_01_8_001.png" width="200" height="200" alt="4x4 with 5th corner">
 
 
 ## About laser cutters
