@@ -17,6 +17,8 @@ This property opens various strategies, as well as making the problem well defin
 However, proving that there is a single solution is likely to be NP-hard.
 Hence, the approach here is to brute force all combinations, effectively counting them.
 
+<img src="image/attempt_01_12_001.jpg" width="800" height="600" alt="Transparent acrylic jigsaw puzzle">
+
 
 ## Getting started
 
@@ -31,7 +33,7 @@ Currently, low-level functions are provided, in order to manipulate 2D grids.
 There are two main representations, depending on the context:
 
  * __Edge-wise__, referred as _grid_, which is a pair of 2D arrays, representing horizontal and vertical edges, of shape H x (W + 1) and (H + 1) x W, respectively.
- * __Piece-wise, referred as _pieces_, which is a single 3D array, representing a 2D array of pieces, of shape H x W x 4.
+ * __Piece-wise__, referred as _pieces_, which is a single 3D array, representing a 2D array of pieces, of shape H x W x 4.
 
 While the former has the advantage of not duplicating any information (and therefore should be usually preferred), the latter is used during the search, as pieces are manipulated explicitly.
 A basic usage is showcased in [`getting_started.ipynb`](getting_started.ipynb).
@@ -46,14 +48,31 @@ The overall flow is as follow:
 
 The number of solution roughly depends on the ratio of the number of edge types and the number of pieces.
 On the one hand, if there are too many edge types, then there is almost surely a single (and often easy) solution.
-On the other hand, if there are too few edge types, then there are almost surely many solution; if uniqueness is requested, this will not converge.
+On the other hand, if there are too few edge types, then there are almost surely many solutions; if uniqueness is requested, this will not converge.
 
 I believe there is no bulletproof strategy here, finding the right balance is trial-and-error.
 The key challenge is to make a puzzle that is enjoyable, and not just pure brute-force.
 Remembering which combinations of pieces have been tested may very well be a nightmare, so be sure to add a "strategy" in your design.
 Number 8 in [`attempt_01.ipynb`](attempt_01.ipynb) is a good example, where counting the types of edges can show which corner and border pieces are in the central area:
 
-![4x4 with 5th corner](image/4x4_5th.png | width=100)
+<img src="image/attempt_01_8_001.png" width="100" height="100" alt="4x4 with 5th corner">
+
+
+## About laser cutters
+
+This whole project came to be since I got the opportunity to use some laser cutter, a Trotec Speedy 300.
+I am by no mean an expert, but cutting acrylic is somewhat straightforward; you just need to find a balance between speed and power, and vendors usually provide hints about typical values.
+
+However, it seems that there are two main categories of acrylic: extruded (XT) and cast (GS).
+While the former is cheaper, the latter yields better-looking results.
+
+A few references:
+
+ * [Trotec: Speedy 300 Operating Manual](https://www.troteclaser.com/static/pdf/speedy-300/operating-manual-Speedy-300-8066-en-us.pdf)
+ * [Trotec: Comparison of cast and extruded acrylic](https://www.trotec-materials.com/material-usage-hints/extruded-vs-cast-acrylic)
+ * [3mm cast acrylic glass used](https://www.amazon.de/-/en/gp/product/B08B8TLHPP/)
+
+<img src="image/attempt_01_cut_001.jpg" width="400" height="225" alt="Trotec Speedy 300 cutting the first attempt">
 
 
 ## References
