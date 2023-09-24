@@ -1,4 +1,3 @@
-
 import numpy as np
 
 
@@ -34,7 +33,8 @@ import numpy as np
     TWISTED_MEDIUM_FEMALE,
     TWISTED_SMALL_MALE,
     TWISTED_SMALL_FEMALE,
-) = range(31)
+    FLAT_ALTERNATIVE,
+) = range(32)
 
 
 edge_names = np.array([
@@ -69,6 +69,7 @@ edge_names = np.array([
     "TWISTED_MEDIUM_FEMALE",
     "TWISTED_SMALL_MALE",
     "TWISTED_SMALL_FEMALE",
+    "FLAT_ALTERNATIVE",
 ])
 
 
@@ -104,6 +105,7 @@ opposite = np.array([
     28, # TWISTED_MEDIUM_FEMALE -> TWISTED_MEDIUM_FEMALE
     29, # TWISTED_SMALL_MALE -> TWISTED_SMALL_MALE
     30, # TWISTED_SMALL_FEMALE -> TWISTED_SMALL_FEMALE
+    31, # FLAT_ALTERNATIVE -> FLAT_ALTERNATIVE
 ], dtype=np.uint8)
 
 
@@ -139,4 +141,5 @@ flip = np.array([
     27, # TWISTED_MEDIUM_FEMALE -> TWISTED_MEDIUM_MALE
     30, # TWISTED_SMALL_MALE -> TWISTED_SMALL_FEMALE
     29, # TWISTED_SMALL_FEMALE -> TWISTED_SMALL_MALE
+    31, # FLAT_ALTERNATIVE -> FLAT_ALTERNATIVE
 ], dtype=np.uint8)

@@ -1,4 +1,3 @@
-
 from .transform import (
     expand_edge_types,
     rotate_piece,

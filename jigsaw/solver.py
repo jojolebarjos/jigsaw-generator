@@ -1,4 +1,3 @@
-
 import numpy as np
 
 from numba import uint8, uintc

@@ -1,4 +1,3 @@
-
 import numpy as np
 
 
@@ -83,7 +82,7 @@ class CircleStyle(Style):
 
         # Radii
         # TODO handle when forward and right have different lengths
-        r = np.sqrt((forward ** 2).sum())
+        r = np.sqrt((forward**2).sum())
         r1 = 0.2 * unit * r
         r2 = 0.4 * unit * r
 
@@ -190,6 +189,11 @@ class CircleStyle(Style):
         # Flat
         if edge == 0:
             self.trace_flat(data, origin, forward, right)
+            return
+
+        # Flat "alternative"
+        if edge == 31:
+            self.trace_unknown(data, origin, forward, right)
             return
 
         # All others comes in both male and female flavors
