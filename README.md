@@ -53,23 +53,125 @@ On the other hand, if there are too few edge types, then there are almost surely
 I believe there is no bulletproof strategy here, finding the right balance is trial-and-error.
 The key challenge is to make a puzzle that is enjoyable, and not just pure brute-force.
 Remembering which combinations of pieces have been tested may very well be a nightmare, so be sure to add a "strategy" in your design.
-Number 8 in [`attempt_01.ipynb`](attempt_01.ipynb) is a good example, where counting the types of edges can show which corner and border pieces are in the central area:
-
-<img src="image/attempt_01_8_001.png" width="200" height="200" alt="4x4 with 5th corner">
 
 
 ## Attempts
 
-Here are the provided design attempts, with some comments.
+Here are the provided design attempts.
 
 <details>
-  <summary>Attempt 01.01 &mdash; 3x3 basic</summary>
+  <summary>01.01 &mdash; 3x3 basic</summary>
 
-  <img src="image/01_01_3x3_basic.svg", width="300", height="300" alt="01.01 - 3x3 basic">
-
+  <img src="image/01_01_3x3_basic.svg" width="300" height="300" alt="01.01 - 3x3 basic">
 </details>
 
-...
+<details>
+  <summary>01.02 &mdash; 3x3</summary>
+
+  <img src="image/01_02_3x3.svg" width="300" height="300" alt="01.02 - 3x3">
+</details>
+
+<details>
+  <summary>01.03 &mdash; 3x3 skewed</summary>
+
+  <img src="image/01_03_3x3_skewed.svg" width="300" height="300" alt="01.03 - 3x3 skewed">
+</details>
+
+<details>
+  <summary>01.04 &mdash; 3x3 skewed</summary>
+
+  <img src="image/01_04_3x3_twisted.svg" width="300" height="300" alt="01.04 - 3x3 twisted">
+</details>
+
+<details>
+  <summary>01.05 &mdash; 4x4</summary>
+
+  <img src="image/01_05_4x4.svg" width="400" height="400" alt="01.05 - 4x4">
+</details>
+
+<details>
+  <summary>01.06 &mdash; 4x4 twisted</summary>
+
+  <img src="image/01_06_4x4_twisted.svg" width="400" height="400" alt="01.06 - 4x4 twisted">
+</details>
+
+<details>
+  <summary>01.07 &mdash; 4x4 with 8 corners</summary>
+
+  <img src="image/01_07_4x4_cross_constrained.svg" width="400" height="400" alt="01.07 - 4x4 with 8 corners">
+</details>
+
+<details>
+  <summary>01.08 &mdash; 4x4 with 5th corner</summary>
+
+  <img src="image/01_08_4x4_5th.svg" width="400" height="400" alt="01.08 - 4x4 with 5th corner">
+</details>
+
+<details>
+  <summary>01.09 &mdash; 4x4 split</summary>
+
+  <img src="image/01_09_4x4_split.svg" width="400" height="400" alt="01.09 - 4x4 split">
+</details>
+
+<details>
+  <summary>01.10 &mdash; 4x4 snake</summary>
+
+  <img src="image/01_10_4x4_snake.svg" width="400" height="400" alt="01.10 - 4x4 snake">
+</details>
+
+<details>
+  <summary>01.11 &mdash; 5x5 with square center</summary>
+
+  <img src="image/01_11_5x5_center.svg" width="500" height="500" alt="01.11 - 5x5 with square center">
+</details>
+
+<details>
+  <summary>01.12 &mdash; 5x5 with 5th corner</summary>
+
+  <img src="image/01_12_5x5_5th.svg" width="500" height="500" alt="01.12 - 5x5 with 5th corner">
+</details>
+
+<details>
+  <summary>02.01 &mdash; 4x4 with 8 corners</summary>
+
+  <img src="image/02_01_4x4_cross.svg" width="400" height="400" alt="02.01 - 4x4 with 8 corners">
+</details>
+
+<details>
+  <summary>02.02 &mdash; 5x5 with nested corners</summary>
+
+  <img src="image/02_02_5x5_nested.svg" width="500" height="500" alt="02.02 - 5x5 with nested corners">
+</details>
+
+<details>
+  <summary>02.03 &mdash; 4x4 with pure square</summary>
+
+  <img src="image/02_03_4x4_pure.svg" width="400" height="400" alt="02.03 - 4x4 with pure square">
+</details>
+
+<details>
+  <summary>02.04 &mdash; 4x4 with more edges</summary>
+
+  <img src="image/02_04_4x4_edge.svg" width="400" height="400" alt="02.04 - 4x4 with more edges">
+</details>
+
+<details>
+  <summary>02.05 &mdash; 4x4 with 6 corners</summary>
+
+  <img src="image/02_05_4x4_6_corners.svg" width="400" height="400" alt="02.05 - 4x4 with 6 corners">
+</details>
+
+<details>
+  <summary>02.06 &mdash; 4x4 corners-only</summary>
+
+  <img src="image/02_06_4x4_only_corners.svg" width="400" height="400" alt="02.06 - 4x4 corners-only">
+</details>
+
+<details>
+  <summary>02.07 &mdash; 4x4 cycle</summary>
+
+  <img src="image/02_07_4x4_cycle.svg" width="400" height="400" alt="02.07 - 4x4 cycle">
+</details>
 
 
 ## About laser cutters
