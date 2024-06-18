@@ -58,6 +58,20 @@ Number 8 in [`attempt_01.ipynb`](attempt_01.ipynb) is a good example, where coun
 <img src="image/attempt_01_8_001.png" width="200" height="200" alt="4x4 with 5th corner">
 
 
+## Attempts
+
+Here are the provided design attempts, with some comments.
+
+<details>
+  <summary>Attempt 01.01 &mdash; 3x3 basic</summary>
+
+  <img src="image/01_01_3x3_basic.svg", width="300", height="300" alt="01.01 - 3x3 basic">
+
+</details>
+
+...
+
+
 ## About laser cutters
 
 This whole project came to be since I got the opportunity to use some laser cutter, a Trotec Speedy 300.
