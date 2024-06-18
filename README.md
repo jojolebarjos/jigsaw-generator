@@ -57,7 +57,18 @@ Remembering which combinations of pieces have been tested may very well be a nig
 
 ## Attempts
 
-Here are the provided design attempts.
+Overall, the lessons learnt are as following:
+
+ * 3x3 are too easy; at most they can act as a tutorial, but should be avoided.
+ * 4x4 are the most successful, a reasonable trade-off that does not scare away most players.
+ * 5x5 should be well-designed, as combinatorics will hit your players hard. They need several clear steps, or they will end up brute-forcing it, and despair. For your veteran players, who seek challenge!
+ * 6x6 and above are both too difficult and tedious to design. I did not even attempt to make some, these sound too scary...
+ * Internal flat edges is the best way to guide the player; having only pins is overwhelming.
+ * Play with the various edge types, as they do not behave the same when flipped or rotated.
+ * Always include a so-called strategy, both on the layout (e.g. only one logical location for an additional corner) and the pins (e.g. a subset of pins only appear on the outer pieces). Please refer to the notebooks for concrete examples.
+ * In particular, players need a way to validate sub-parts of their solution; being able to confirm that some pieces must be together is reassuring and avoid naive brute-forcing.
+
+Here are the provided design attempts, the most successful designs are marked with a ⭐:
 
 <details>
   <summary>01.01 &mdash; 3x3 basic</summary>
@@ -102,19 +113,19 @@ Here are the provided design attempts.
 </details>
 
 <details>
-  <summary>01.08 &mdash; 4x4 with 5th corner</summary>
+  <summary>01.08 &mdash; 4x4 with 5th corner ⭐</summary>
 
   <img src="image/01_08_4x4_5th.svg" width="400" height="400" alt="01.08 - 4x4 with 5th corner">
 </details>
 
 <details>
-  <summary>01.09 &mdash; 4x4 split</summary>
+  <summary>01.09 &mdash; 4x4 split ⭐</summary>
 
   <img src="image/01_09_4x4_split.svg" width="400" height="400" alt="01.09 - 4x4 split">
 </details>
 
 <details>
-  <summary>01.10 &mdash; 4x4 snake</summary>
+  <summary>01.10 &mdash; 4x4 snake ⭐</summary>
 
   <img src="image/01_10_4x4_snake.svg" width="400" height="400" alt="01.10 - 4x4 snake">
 </details>
@@ -138,25 +149,25 @@ Here are the provided design attempts.
 </details>
 
 <details>
-  <summary>02.02 &mdash; 5x5 with nested corners</summary>
+  <summary>02.02 &mdash; 5x5 with nested corners ⭐</summary>
 
   <img src="image/02_02_5x5_nested.svg" width="500" height="500" alt="02.02 - 5x5 with nested corners">
 </details>
 
 <details>
-  <summary>02.03 &mdash; 4x4 with pure square</summary>
+  <summary>02.03 &mdash; 4x4 with pure square ⭐</summary>
 
   <img src="image/02_03_4x4_pure.svg" width="400" height="400" alt="02.03 - 4x4 with pure square">
 </details>
 
 <details>
-  <summary>02.04 &mdash; 4x4 with more edges</summary>
+  <summary>02.04 &mdash; 4x4 with more edges ⭐</summary>
 
   <img src="image/02_04_4x4_edge.svg" width="400" height="400" alt="02.04 - 4x4 with more edges">
 </details>
 
 <details>
-  <summary>02.05 &mdash; 4x4 with 6 corners</summary>
+  <summary>02.05 &mdash; 4x4 with 6 corners ⭐</summary>
 
   <img src="image/02_05_4x4_6_corners.svg" width="400" height="400" alt="02.05 - 4x4 with 6 corners">
 </details>
@@ -168,7 +179,7 @@ Here are the provided design attempts.
 </details>
 
 <details>
-  <summary>02.07 &mdash; 4x4 cycle</summary>
+  <summary>02.07 &mdash; 4x4 cycle ⭐</summary>
 
   <img src="image/02_07_4x4_cycle.svg" width="400" height="400" alt="02.07 - 4x4 cycle">
 </details>
