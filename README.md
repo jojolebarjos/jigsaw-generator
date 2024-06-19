@@ -17,7 +17,7 @@ This property opens various strategies, as well as making the problem well defin
 However, proving that there is a single solution is likely to be NP-hard.
 Hence, the approach here is to brute force all combinations, effectively counting them.
 
-<img src="image/attempt_01_12_001.jpg" width="800" height="600" alt="Transparent acrylic jigsaw puzzle">
+<img src="image/01_12_001.jpg" width="800" height="600" alt="Transparent acrylic jigsaw puzzle">
 
 
 ## Getting started
@@ -199,7 +199,7 @@ A few references:
  * [Trotec: Comparison of cast and extruded acrylic](https://www.trotec-materials.com/material-usage-hints/extruded-vs-cast-acrylic)
  * [3mm cast acrylic glass used](https://www.amazon.de/-/en/gp/product/B08B8TLHPP/)
 
-<img src="image/attempt_01_cut_001.jpg" width="400" height="225" alt="Trotec Speedy 300 cutting the first attempt">
+<img src="image/01_cut_001.jpg" width="400" height="225" alt="Trotec Speedy 300 cutting the first attempt">
 
 
 ## References
